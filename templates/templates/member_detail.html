@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block page_title %}Member Profile{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-4">
+        <div class="stat-card" style="text-align: center;">
+            <div style="width: 100px; height: 100px; background: #2a7f4b; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; margin: 0 auto 20px;">
+                {{ member.full_name[:2]|upper }}
+            </div>
+            <h2>{{ member.full_name }}</h2>
+            <p style="color: #666;">{{ member.role }} • {{ member.department }}</p>
+            <p style="color: #999;">Member since: {{ member.registration_date }}</p>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="callMember()">
+                    <i class="fas fa-phone"></i> Call
+                </button>
+                <button class="btn btn-info" style="flex: 1;" onclick="viewAttendance()">
+                    <i class="fas fa-calendar-check"></i> Attendance
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-8">
+        <div class="stat-card">
+            <h3>Member Information</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px;">
+                <div>
+                    <h4>Contact Information</h4>
+                    <p><i class="fas fa-phone"></i> {{ member.phone }}</p>
+                    <p><i class="fas fa-envelope"></i> {{ member.email }}</p>
+                    <p><i class="fas fa-map-marker"></i> {{ member.address }}</p>
+                </div>
+                
+                <div>
+                    <h4>Personal Details</h4>
+                    <p><i class="fas fa-birthday-cake"></i> {{ member.date_of_birth }} ({{ member.age }} years old)</p>
+                    <p><i class="fas fa-venus-mars"></i> {{ member.gender }}</p>
+                    <p><i class="fas fa-heart"></i> {{ member.marital_status }}</p>
+                </div>
+                
+                <div>
+                    <h4>Emergency Contact</h4>
+                    {% if member.emergency_contact_name %}
+                    <p><i class="fas fa-user"></i> {{ member.emergency_contact_name }}</p>
+                    <p><i class="fas fa-phone"></i> {{ member.emergency_contact_phone }}</p>
+                    {% else %}
+                    <p style="color: #999;">No emergency contact information provided</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <h4>Additional Information</h4>
+                    <p><i class="fas fa-briefcase"></i> Occupation: {{ member.occupation }}</p>
+                    <p><i class="fas fa-graduation-cap"></i> School: {{ member.school or 'Not specified' }}</p>
+                </div>
+                
+                <div>
+                    <h4>Church Information</h4>
+                    <p><i class="fas fa-users"></i> Department: {{ member.department }}</p>
+                    <p><i class="fas fa-tag"></i> Role: {{ member.role }}</p>
+                    <p><i class="fas fa-cross"></i> Baptism: {{ member.baptism_status }}</p>
+                </div>
+                
+                <div>
+                    <h4>Member Statistics</h4>
+                    <p><i class="fas fa-id-card"></i> Member ID: {{ member.member_id }}</p>
+                    <p><i class="fas fa-circle"></i> Status: 
+                        <span class="badge badge-{{ 'success' if member.status == 'Active' else 'warning' }}">
+                            {{ member.status }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button class="btn btn-secondary" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i> Back to Members
+                </button>
+                <button class="btn btn-warning" onclick="editMember()">
+                    <i class="fas fa-edit"></i> Edit Member
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function callMember() {
+        alert('Calling {{ member.phone }}');
+    }
+    
+    function viewAttendance() {
+        alert('Viewing attendance history for {{ member.full_name }}');
+    }
+    
+    function goBack() {
+        window.location.href = '/members';
+    }
+    
+    function editMember() {
+        alert('Edit member feature coming soon!');
+    }
+</script>
+{% endblock %}

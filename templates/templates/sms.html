@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block page_title %}SMS Command Center{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-4">
+        <div class="stat-card" style="text-align: center;">
+            <div class="stat-title">Total Messages</div>
+            <div class="stat-number">{{ messages_sent }}</div>
+            <small>This Month: +0 today</small>
+        </div>
+    </div>
+    
+    <div class="col-4">
+        <div class="stat-card" style="text-align: center;">
+            <div class="stat-title">Successfully Sent</div>
+            <div class="stat-number">{{ messages_sent }}</div>
+            <small>Status: 100% Healthy</small>
+        </div>
+    </div>
+    
+    <div class="col-4">
+        <div class="stat-card" style="text-align: center;">
+            <div class="stat-title">SMS Credits</div>
+            <div class="stat-number">{{ credits }}</div>
+            <small>Status: Healthy</small>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-4">
+        <div class="stat-card">
+            <i class="fas fa-bolt" style="font-size: 2rem; color: #ffc107; margin-bottom: 10px;"></i>
+            <h4>Quick Send</h4>
+            <p style="color: #666;">Send SMS instantly to individuals or groups</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="showQuickSend()">
+                Send Now →
+            </button>
+        </div>
+    </div>
+    
+    <div class="col-4">
+        <div class="stat-card">
+            <i class="fas fa-file-alt" style="font-size: 2rem; color: #28a745; margin-bottom: 10px;"></i>
+            <h4>Templates</h4>
+            <p style="color: #666;">Create and manage reusable SMS templates</p>
+            <button class="btn btn-success" style="width: 100%;" onclick="showTemplates()">
+                Manage Templates →
+            </button>
+        </div>
+    </div>
+    
+    <div class="col-4">
+        <div class="stat-card">
+            <i class="fas fa-server" style="font-size: 2rem; color: #17a2b8; margin-bottom: 10px;"></i>
+            <h4>Providers</h4>
+            <p style="color: #666;">Manage SMS providers and performance</p>
+            <button class="btn btn-info" style="width: 100%;" onclick="showProviders()">
+                Manage Providers →
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Send Modal -->
+<div id="quickSendModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000;">
+    <div style="background: white; width: 600px; margin: 100px auto; padding: 30px; border-radius: 10px;">
+        <h3 style="margin-bottom: 20px;">Send SMS</h3>
+        
+        <div style="margin-bottom: 20px;">
+            <label class="form-label">Select Recipients</label>
+            
+            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <input type="radio" name="recipient_type" id="all_members" checked>
+                    <label for="all_members" style="margin-left: 10px; flex: 1;">
+                        <strong>All Members (Adults 18+ only)</strong>
+                        <br>
+                        <small style="color: #666;">Send to all adult members with phone numbers (226 recipients)</small>
+                    </label>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <input type="radio" name="recipient_type" id="custom_numbers">
+                    <label for="custom_numbers" style="margin-left: 10px; flex: 1;">
+                        <strong>Custom Numbers</strong>
+                        <br>
+                        <small style="color: #666;">Select specific members from the list</small>
+                    </label>
+                </div>
+                
+                <div style="display: flex; align-items: center;">
+                    <input type="radio" name="recipient_type" id="single_number">
+                    <label for="single_number" style="margin-left: 10px; flex: 1;">
+                        <strong>Single Number</strong>
+                        <br>
+                        <small style="color: #666;">Send to one specific person</small>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Your SMS Message</label>
+            <textarea class="form-control" id="sms_message" rows="4" placeholder="Type your message here..."></textarea>
+            <small style="color: #666; display: block; margin-top: 5px;">160 characters per SMS</small>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <h4>Near-time cost estimation</h4>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Recipients: 226</span>
+                <span>SMS Parts: 1</span>
+                <span><strong>Total Cost: 226 credits</strong></span>
+            </div>
+        </div>
+        
+        <div style="background: #e8f4fd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <h4>SMS Tips</h4>
+            <ul style="margin: 10px 0 0 20px; color: #666;">
+                <li>Keep it concise - Aim for under 160 characters</li>
+                <li>Clear call-to-action - Include specific instructions</li>
+                <li>Personal touch - Use templates but customize</li>
+                <li>Test first - Send to yourself before broadcasting</li>
+            </ul>
+        </div>
+        
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="hideQuickSend()">Cancel</button>
+            <button class="btn btn-success" onclick="sendSMS()">Send SMS</button>
+        </div>
+    </div>
+</div>
+
+<!-- Templates Modal -->
+<div id="templatesModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000;">
+    <div style="background: white; width: 600px; margin: 100px auto; padding: 30px; border-radius: 10px;">
+        <h3 style="margin-bottom: 20px;">Message Templates</h3>
+        
+        <div class="form-group">
+            <label class="form-label">Welcome Message</label>
+            <textarea class="form-control" rows="2">Dear {{first_name}}, welcome to Flood of Life Church! We are blessed to have you.</textarea>
+            <button class="btn btn-sm btn-outline-primary" style="margin-top: 5px;" onclick="useTemplate('welcome')">Use Template</button>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Service Reminder</label>
+            <textarea class="form-control" rows="2">Dear {{first_name}}, join us this Sunday at 8:30 AM for worship service. God bless you!</textarea>
+            <button class="btn btn-sm btn-outline-primary" style="margin-top: 5px;" onclick="useTemplate('service')">Use Template</button>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Prayer Request</label>
+            <textarea class="form-control" rows="2">Prayer request received. We are praying with you.</textarea>
+            <button class="btn btn-sm btn-outline-primary" style="margin-top: 5px;" onclick="useTemplate('prayer')">Use Template</button>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Tithe Thank You</label>
+            <textarea class="form-control" rows="2">Dear {{first_name}}, thank you for your tithe of R{{amount}}. We appreciate your faithfulness.</textarea>
+            <button class="btn btn-sm btn-outline-primary" style="margin-top: 5px;" onclick="useTemplate('tithe')">Use Template</button>
+        </div>
+        
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <button class="btn btn-secondary" onclick="hideTemplates()">Close</button>
+            <button class="btn btn-primary" onclick="createNewTemplate()">Create New Template</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showQuickSend() {
+        document.getElementById('quickSendModal').style.display = 'block';
+    }
+    
+    function hideQuickSend() {
+        document.getElementById('quickSendModal').style.display = 'none';
+    }
+    
+    function showTemplates() {
+        document.getElementById('templatesModal').style.display = 'block';
+    }
+    
+    function hideTemplates() {
+        document.getElementById('templatesModal').style.display = 'none';
+    }
+    
+    function showProviders() {
+        alert('Provider management coming soon!');
+    }
+    
+    function sendSMS() {
+        let message = document.getElementById('sms_message').value;
+        if(message) {
+            alert('SMS sent successfully!');
+            hideQuickSend();
+        } else {
+            alert('Please enter a message');
+        }
+    }
+    
+    function useTemplate(type) {
+        alert('Template loaded!');
+        hideTemplates();
+        showQuickSend();
+    }
+    
+    function createNewTemplate() {
+        alert('Create new template feature coming soon!');
+    }
+</script>
+{% endblock %}

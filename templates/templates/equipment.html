@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block page_title %}Equipment Inventory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="stat-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Manage and track all church equipment and assets efficiently</h3>
+                <div>
+                    <button class="btn btn-primary" onclick="showAddEquipment()">
+                        <i class="fas fa-plus"></i> Add Equipment
+                    </button>
+                    <button class="btn btn-info" onclick="showMaintenance()">
+                        <i class="fas fa-tools"></i> Maintenance
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-8">
+                    <input type="text" class="form-control" placeholder="Search by name, description, location...">
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-secondary" style="width: 100%;">
+                        <i class="fas fa-filter"></i> Show Advanced
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h4>Equipment List ({{ equipment|length }} total)</h4>
+    </div>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>NAME</th>
+                <th>CATEGORY</th>
+                <th>STATUS</th>
+                <th>PURCHASE DATE</th>
+                <th>ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in equipment %}
+            <tr>
+                <td><strong>{{ item.name }}</strong></td>
+                <td>
+                    <span class="badge badge-info">{{ item.category }}</span>
+                </td>
+                <td>
+                    <span class="badge badge-{{ 'success' if item.status == 'Excellent' else 'warning' }}">
+                        {{ item.status }}
+                    </span>
+                </td>
+                <td>{{ item.purchase_date }}</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="viewEquipment('{{ item.equipment_id }}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="generateQR('{{ item.equipment_id }}')">
+                        <i class="fas fa-qrcode"></i>
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="editEquipment('{{ item.equipment_id }}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Equipment Modal -->
+<div id="addEquipmentModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000;">
+    <div style="background: white; width: 500px; margin: 100px auto; padding: 30px; border-radius: 10px;">
+        <h3 style="margin-bottom: 20px;">Add New Equipment</h3>
+        
+        <div class="form-group">
+            <label class="form-label">Equipment Name</label>
+            <input type="text" class="form-control" id="equipment_name" required>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-control" id="equipment_category">
+                <option>media</option>
+                <option>instruments</option>
+                <option>furniture</option>
+                <option>cctv_camera</option>
+                <option>sound_system</option>
+                <option>lighting</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-control" id="equipment_status">
+                <option>Excellent</option>
+                <option>Good</option>
+                <option>Fair</option>
+                <option>Needs Repair</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Purchase Date</label>
+            <input type="date" class="form-control" id="equipment_purchase_date">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-control" id="equipment_location">
+        </div>
+        
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <button class="btn btn-secondary" onclick="hideAddEquipment()">Cancel</button>
+            <button class="btn btn-success" onclick="saveEquipment()">Add Equipment</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAddEquipment() {
+        document.getElementById('addEquipmentModal').style.display = 'block';
+    }
+    
+    function hideAddEquipment() {
+        document.getElementById('addEquipmentModal').style.display = 'none';
+    }
+    
+    function showMaintenance() {
+        alert('Maintenance schedule coming soon!');
+    }
+    
+    function viewEquipment(id) {
+        alert('Viewing equipment: ' + id);
+    }
+    
+    function generateQR(id) {
+        alert('QR Code generated for equipment: ' + id + '\n\nScan to view equipment details');
+    }
+    
+    function editEquipment(id) {
+        alert('Edit feature coming soon for equipment: ' + id);
+    }
+    
+    function saveEquipment() {
+        alert('Equipment added successfully!');
+        hideAddEquipment();
+    }
+</script>
+{% endblock %}

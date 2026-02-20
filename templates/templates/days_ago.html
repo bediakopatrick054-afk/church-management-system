@@ -1,0 +1,17 @@
+# Add this to app.py before the routes
+@app.template_filter('days_ago')
+def days_ago(date_string):
+    """Calculate days ago from date string"""
+    if not date_string:
+        return 0
+    try:
+        date_obj = datetime.strptime(date_string, '%Y-%m-%d')
+        delta = datetime.now() - date_obj
+        return delta.days
+    except:
+        return 0
+
+@app.template_filter('now')
+def now():
+    """Get current datetime"""
+    return datetime.now()

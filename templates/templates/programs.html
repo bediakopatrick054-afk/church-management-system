@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block page_title %}Programs & Events{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="stat-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Upcoming Programs</h3>
+                <div>
+                    <button class="btn btn-primary" onclick="showCreateProgram()">
+                        <i class="fas fa-plus"></i> Create Program
+                    </button>
+                    <button class="btn btn-info" onclick="viewCalendar()">
+                        <i class="fas fa-calendar"></i> View Calendar
+                    </button>
+                    <button class="btn btn-success" onclick="exportData()">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button class="btn btn-outline-primary">THIS MONTH</button>
+                <button class="btn btn-outline-primary">THIS WEEK</button>
+                <button class="btn btn-outline-primary">THIS QUARTER</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if programs %}
+<div class="row">
+    {% for program in programs %}
+    <div class="col-4">
+        <div class="stat-card">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <h4>{{ program.name }}</h4>
+                <span class="badge badge-{{ 'success' if program.status == 'In progress' else 'warning' if program.status == 'Planned' else 'secondary' }}">
+                    {{ program.status }}
+                </span>
+            </div>
+            
+            <p style="color: #666; margin: 10px 0;">{{ program.description }}</p>
+            
+            <div style="margin: 15px 0;">
+                <p><i class="fas fa-calendar"></i> {{ program.start_date }} • Ends on {{ program.end_date }}</p>
+                <p><i class="fas fa-user"></i> {{ program.coordinator }}</p>
+                <p><i class="fas fa-building"></i> {{ program.department }}</p>
+            </div>
+            
+            <button class="btn btn-outline-primary" style="width: 100%;" onclick="viewProgram('{{ program.program_id }}')">
+                View Details
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="stat-card" style="text-align: center; padding: 50px;">
+    <i class="fas fa-calendar-times" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
+    <h3>No upcoming programs</h3>
+    <p style="color: #666; margin-bottom: 20px;">Start planning your next church program to keep your community engaged and growing.</p>
+    <button class="btn btn-primary" onclick="showCreateProgram()">
+        <i class="fas fa-plus"></i> Create Program
+    </button>
+</div>
+{% endif %}
+
+<!-- Create Program Modal -->
+<div id="createProgramModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000;">
+    <div style="background: white; width: 600px; margin: 50px auto; padding: 30px; border-radius: 10px; max-height: 80vh; overflow-y: auto;">
+        <h3 style="margin-bottom: 20px;">Create New Program</h3>
+        
+        <div class="form-group">
+            <label class="form-label">Program Name</label>
+            <input type="text" class="form-control" id="program_name" required>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" id="program_description" rows="3"></textarea>
+        </div>
+        
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="program_start">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label class="form-label">End Date</label>
+                    <input type="date" class="form-control" id="program_end">
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label class="form-label">Start Time</label>
+                    <input type="time" class="form-control" id="program_start_time">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label class="form-label">End Time</label>
+                    <input type="time" class="form-control" id="program_end_time">
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-control" id="program_location">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Coordinator</label>
+            <input type="text" class="form-control" id="program_coordinator">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Department</label>
+            <select class="form-control" id="program_department">
+                <option>Media Ministry</option>
+                <option>Choir</option>
+                <option>Ushering</option>
+                <option>Children's Ministry</option>
+                <option>Youth Ministry</option>
+                <option>Prayer Team</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <button class="btn btn-secondary" onclick="hideCreateProgram()">Cancel</button>
+            <button class="btn btn-success" onclick="saveProgram()">Create Program</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showCreateProgram() {
+        document.getElementById('createProgramModal').style.display = 'block';
+    }
+    
+    function hideCreateProgram() {
+        document.getElementById('createProgramModal').style.display = 'none';
+    }
+    
+    function viewCalendar() {
+        alert('Calendar view coming soon!');
+    }
+    
+    function exportData() {
+        alert('Export data feature coming soon!');
+    }
+    
+    function viewProgram(id) {
+        alert('Viewing program: ' + id);
+    }
+    
+    function saveProgram() {
+        alert('Program created successfully!');
+        hideCreateProgram();
+    }
+</script>
+{% endblock %}

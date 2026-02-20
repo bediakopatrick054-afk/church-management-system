@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block page_title %}Members Directory{% endblock %}
+
+{% block content %}
+<!-- Summary Cards -->
+<div class="row">
+    <div class="col-3">
+        <div class="stat-card">
+            <div class="stat-title">Total Members</div>
+            <div class="stat-number">{{ total }}</div>
+        </div>
+    </div>
+    
+    <div class="col-3">
+        <div class="stat-card">
+            <div class="stat-title">Active</div>
+            <div class="stat-number">25</div>
+        </div>
+    </div>
+    
+    <div class="col-3">
+        <div class="stat-card">
+            <div class="stat-title">New (30d)</div>
+            <div class="stat-number">24</div>
+        </div>
+    </div>
+    
+    <div class="col-3">
+        <div class="stat-card">
+            <div class="stat-title">Actions</div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="showAddMember()">
+                <i class="fas fa-user-plus"></i> Add Member
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Search Bar -->
+<div class="stat-card" style="margin-bottom: 20px;">
+    <div class="row">
+        <div class="col-8">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search members by name, phone, or email..." onkeyup="searchMembers()">
+        </div>
+        <div class="col-4">
+            <button class="btn btn-info" style="width: 100%;" onclick="searchMembers()">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Members Table -->
+<div class="table-container">
+    <table id="membersTable">
+        <thead>
+            <tr>
+                <th>NAME</th>
+                <th>CONTACT</th>
+                <th>DEPARTMENT</th>
+                <th>ROLE</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in members %}
+            <tr>
+                <td>
+                    <strong>{{ member.full_name }}</strong><br>
+                    <small style="color: #999;">ID: {{ member.member_id }}</small>
+                </td>
+                <td>
+                    {{ member.phone }}<br>
+                    <small style="color: #999;">{{ member.email }}</small>
+                </td>
+                <td>{{ member.department }}</td>
+                <td>{{ member.role }}</td>
+                <td>
+                    {% if member.status == 'Active' %}
+                    <span class="badge badge-success">Active</span>
+                    {% elif member.status == 'Inactive' %}
+                    <span class="badge badge-warning">Inactive</span>
+                    {% else %}
+                    <span class="badge badge-danger">{{ member.status }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="viewMember('{{ member.member_id }}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="editMember('{{ member.member_id }}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div style="margin-top: 20px; color: #666;">
+        Showing 1 to {{ members|length }} of {{ total }} members
+    </div>
+</div>
+
+<script>
+    function searchMembers() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let table = document.getElementById('membersTable');
+        let rows = table.getElementsByTagName('tr');
+        
+        for (let i = 1; i < rows.length; i++) {
+            let row = rows[i];
+            let name = row.cells[0].textContent.toLowerCase();
+            let phone = row.cells[1].textContent.toLowerCase();
+            
+            if (name.includes(input) || phone.includes(input)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+    
+    function viewMember(id) {
+        window.location.href = '/member/' + id;
+    }
+    
+    function editMember(id) {
+        alert('Edit feature coming soon for member: ' + id);
+    }
+</script>
+{% endblock %}

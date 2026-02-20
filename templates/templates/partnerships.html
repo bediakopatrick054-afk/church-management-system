@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block page_title %}Partnerships{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-4">
+        <div class="stat-card">
+            <div class="stat-title">Total Partners</div>
+            <div class="stat-number">{{ summary.total_partners }}</div>
+            <small>↑ {{ summary.total_partners }} active</small>
+        </div>
+    </div>
+    
+    <div class="col-4">
+        <div class="stat-card">
+            <div class="stat-title">Total Contributions</div>
+            <div class="stat-number">R {{ "%.2f"|format(summary.total_contributions) }}</div>
+            <small>All time</small>
+        </div>
+    </div>
+    
+    <div class="col-4">
+        <div class="stat-card">
+            <div class="stat-title">Church Members</div>
+            <div class="stat-number">{{ summary.church_members }}</div>
+            <small>{{ "%.0f"|format(summary.church_member_pct) }}% of total</small>
+        </div>
+    </div>
+</div>
+
+<div class="stat-card">
+    <h3>Monthly Average</h3>
+    <div style="font-size: 2.5rem; font-weight: bold; color: #1e3c2c;">R {{ "%.2f"|format(summary.monthly_avg) }}</div>
+    <small>Last 6 months</small>
+</div>
+
+<div class="stat-card">
+    <h3>Partnership Tiers</h3>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tier</th>
+                <th>Entry Level</th>
+                <th>Gold Partners</th>
+                <th>Diamond Partners</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Bronze Partners</strong></td>
+                <td>{{ summary.tier_counts.get('Bronze Partners', 0) }}</td>
+                <td>{{ summary.tier_counts.get('Gold Partners', 0) }}</td>
+                <td>{{ summary.tier_counts.get('Diamond Partners', 0) }}</td>
+            </tr>
+            <tr>
+                <td><strong>Recent (30 days)</strong></td>
+                <td>R 0.00</td>
+                <td>R 0.00</td>
+                <td>R {{ "%.2f"|format(summary.recent_contributions) }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="row">
+    <div class="col-6">
+        <div class="stat-card">
+            <h3>Premium Partners</h3>
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-crown" style="font-size: 3rem; color: #ffd700;"></i>
+                <p style="margin-top: 10px;">Coming Soon</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-6">
+        <div class="stat-card">
+            <h3>Elite Partners</h3>
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-star" style="font-size: 3rem; color: #2a7f4b;"></i>
+                <p style="margin-top: 10px;">Coming Soon</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="stat-card">
+    <h3>Add New Partner</h3>
+    <div class="row">
+        <div class="col-3">
+            <input type="text" class="form-control" placeholder="Partner Name">
+        </div>
+        <div class="col-2">
+            <select class="form-control">
+                <option>Individual</option>
+                <option>Corporate</option>
+            </select>
+        </div>
+        <div class="col-2">
+            <select class="form-control">
+                <option>Gold Partners</option>
+                <option>Diamond Partners</option>
+                <option>Bronze Partners</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <input type="text" class="form-control" placeholder="Contact Person">
+        </div>
+        <div class="col-2">
+            <button class="btn btn-success" style="width: 100%;" onclick="addPartner()">
+                <i class="fas fa-plus"></i> Add
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addPartner() {
+        alert('Partner added successfully!');
+    }
+</script>
+{% endblock %}
