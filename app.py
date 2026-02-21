@@ -2443,9 +2443,6 @@ print("\nThank you for using this Church Management System!")
 # In[34]:
 
 
-# This will convert your notebook to a Python file
-get_ipython().system('jupyter nbconvert --to script your_notebook_name.ipynb')
-
 
 # In[36]:
 
@@ -2490,12 +2487,8 @@ def add_sermon():
         return redirect(url_for("home"))
     return render_template("add_sermon.html")
 
-if __name__ == "__main__":
-    app.run()
-
 # ===== RUN THE APP =====
 if __name__ == '__main__':
     import os
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
