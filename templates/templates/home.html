@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Church Management System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 8px; margin: 5px 0; background: #f5f5f5; border-radius: 4px; }
+        a { text-decoration: none; color: #007bff; }
+        a:hover { text-decoration: underline; }
+        .nav { margin: 20px 0; padding: 10px; background: #e9ecef; border-radius: 4px; }
+        .nav a { margin-right: 15px; }
+    </style>
+</head>
+<body>
+    <h1>🏛️ Church Management System</h1>
+    
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/register">Register Member</a>
+        <a href="/add_event">Add Event</a>
+        <a href="/add_sermon">Add Sermon</a>
+    </div>
+    
+    <h2>📋 Members ({{ members|length }})</h2>
+    <ul>
+    {% for member in members %}
+        <li><strong>{{ member.name }}</strong> - {{ member.email }}</li>
+    {% else %}
+        <li>No members registered yet</li>
+    {% endfor %}
+    </ul>
+    
+    <h2>📅 Events ({{ events|length }})</h2>
+    <ul>
+    {% for event in events %}
+        <li><strong>{{ event.title }}</strong> - {{ event.date }}</li>
+    {% else %}
+        <li>No events scheduled</li>
+    {% endfor %}
+    </ul>
+    
+    <h2>🎙️ Sermons ({{ sermons|length }})</h2>
+    <ul>
+    {% for sermon in sermons %}
+        <li><a href="{{ sermon.link }}" target="_blank">{{ sermon.title }}</a></li>
+    {% else %}
+        <li>No sermons available</li>
+    {% endfor %}
+    </ul>
+    
+    <p style="margin-top: 40px; color: #999; font-size: 0.8em;">
+        Data is stored in memory. Use /save_data and /load_data endpoints for persistence.
+    </p>
+</body>
+</html>
