@@ -2458,7 +2458,7 @@ sermons = []
 
 @app.route("/")
 def home():
-    return render_template("home.html", members=members, events=events, sermons=sermons)
+   return render_template("home.html", members=members, events=events, sermons=sermons)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
