@@ -22,12 +22,10 @@ import string
 import base64
 from io import BytesIO
 import uuid
-from IPython.display import display, HTML, clear_output
 import json
 import warnings
 warnings.filterwarnings('ignore')
 import hashlib  # for QR codes
-import uuid  # for generating unique IDs
 
 # ===== FLASK APP INITIALIZATION =====
 app = Flask(__name__)
@@ -66,7 +64,7 @@ class PartnershipManager:
             'email': email,
             'phone': phone,
             'partnership_date': partnership_date,
-            'created_at': datetime.datetime.now().isoformat()
+            'created_at': datetime.now().isoformat()
         }
         self.partners.append(partner)
         self.save_data()
@@ -229,19 +227,19 @@ class ChurchManagementSystem:
         self.version = "1.0.0"
         
         # Initialize all modules
-        self.members = 'MemberManager()'
-        self.attendance = 'AttendanceManager()'
-        self.finance = 'FinanceManager()'
-        self.children = 'ChildrenMinistry()'
-        self.visitors = 'VisitorManager()'
-        self.programs = 'ProgramManager()'
-        self.equipment = 'EquipmentManager()'
-        self.groups = 'GroupManager()'
-        self.prayer = 'PrayerLineManager()'
-        self.welfare = 'WelfareManager()'
-        self.partnerships = 'PartnershipManager()'
-        self.sms = 'SMSManager()'
-        self.feedback = 'FeedbackManager()'
+        self.members = None
+        self.attendance = None
+        self.finance = None
+        self.children = None
+        self.visitors = None
+        self.programs = None
+        self.equipment = None
+        self.groups = None
+        self.prayer = None
+        self.welfare = None
+        self.partnerships = None
+        self.sms = None
+        self.feedback = None
         
         print(f"✓ {church_name} Management System initialized")
         print(f"✓ Version: {self.version}")
@@ -253,13 +251,13 @@ class ChurchManagementSystem:
         print(f"{self.church_name} - DASHBOARD")
         print("="*70)
         
-        # Get summary metrics
-        total_members = len(self.members.members_df)
-        new_members_30d = self.members.get_new_members_count(30)
-        total_children = len(self.children.children_df)
-        financial_balance = self.finance.get_current_balance()
-        birthdays_today = self.members.get_birthdays_today()
-        birthdays_this_week = self.members.get_birthdays_this_week()
+        # Get summary metrics (with empty data)
+        total_members = 0
+        new_members_30d = 0
+        total_children = 0
+        financial_balance = 0
+        birthdays_today = 0
+        birthdays_this_week = 0
         
         # Display metrics in a grid
         print(f"""
@@ -301,114 +299,7 @@ class MemberManager:
             'baptism_status', 'registration_date', 'emergency_contact_name',
             'emergency_contact_phone', 'family_members'
         ])
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample member data based on screenshots"""
-        sample_members = [
-            {
-                'member_id': 'M001', 'first_name': 'Keith', 'last_name': 'Mathibela',
-                'full_name': 'Keith Mathibela', 'date_of_birth': '2002-08-27',
-                'age': 23, 'gender': 'Male', 'marital_status': 'Single',
-                'phone': '27634772587', 'email': 'keith@example.com', 'address': '6238 EXTENSION 2',
-                'occupation': 'Doctor', 'school': 'CUT', 'department': 'Intercessors',
-                'role': 'Member', 'status': 'Active', 'baptism_status': 'Baptized',
-                'registration_date': '2025-08-27', 'emergency_contact_name': 'Mary Mathibela',
-                'emergency_contact_phone': '27712345678', 'family_members': 0
-            },
-            {
-                'member_id': 'M002', 'first_name': 'Nii', 'last_name': 'Ankrah',
-                'full_name': 'Nii Ankrah', 'date_of_birth': '1990-05-15',
-                'age': 36, 'gender': 'Male', 'marital_status': 'Married',
-                'phone': '034455666', 'email': 'ankrah@gmail.com', 'address': 'Accra, Ghana',
-                'occupation': 'IT', 'school': 'Ghana Law School', 'department': 'Media',
-                'role': 'Worker', 'status': 'Active', 'baptism_status': 'Baptized',
-                'registration_date': '2025-08-17', 'emergency_contact_name': 'Father',
-                'emergency_contact_phone': '0234455666', 'family_members': 1
-            },
-            {
-                'member_id': 'M003', 'first_name': 'John', 'last_name': 'Odabor',
-                'full_name': 'John Odabor', 'date_of_birth': '1985-03-20',
-                'age': 40, 'gender': 'Male', 'marital_status': 'Married',
-                'phone': '233246670114', 'email': 'odabor@gmail.com', 'address': 'Accra',
-                'occupation': 'Civil Servant', 'school': '', 'department': 'Administration',
-                'role': 'Deacon', 'status': 'Active', 'baptism_status': 'Baptized',
-                'registration_date': '2025-01-15', 'emergency_contact_name': 'Jane Odabor',
-                'emergency_contact_phone': '233246670115', 'family_members': 3
-            },
-            {
-                'member_id': 'M004', 'first_name': 'Kwanse', 'last_name': 'Aisdeu',
-                'full_name': 'Kwanse Aisdeu', 'date_of_birth': '1960-07-10',
-                'age': 65, 'gender': 'Male', 'marital_status': 'Married',
-                'phone': '0592478790', 'email': 'kwanse@example.com', 'address': 'Kumasi',
-                'occupation': 'Retired', 'school': '', 'department': 'Administration',
-                'role': 'Elder', 'status': 'Active', 'baptism_status': 'Baptized',
-                'registration_date': '2024-05-20', 'emergency_contact_name': 'Grace Aisdeu',
-                'emergency_contact_phone': '0592478791', 'family_members': 4
-            },
-            {
-                'member_id': 'M005', 'first_name': 'Nympha', 'last_name': 'Akeyampong',
-                'full_name': 'Nympha Akeyampong', 'date_of_birth': '1980-11-25',
-                'age': 45, 'gender': 'Female', 'marital_status': 'Married',
-                'phone': '0236903980', 'email': 'nympha@example.com', 'address': 'Tema',
-                'occupation': 'Nurse', 'school': '', 'department': 'Ushering',
-                'role': 'Usher', 'status': 'Active', 'baptism_status': 'Baptized',
-                'registration_date': '2025-02-10', 'emergency_contact_name': 'Kwame Akeyampong',
-                'emergency_contact_phone': '0236903981', 'family_members': 2
-            },
-            {
-                'member_id': 'M006', 'first_name': 'Obadiah', 'last_name': 'Otoo',
-                'full_name': 'Obadiah Otoo', 'date_of_birth': '2005-09-30',
-                'age': 20, 'gender': 'Male', 'marital_status': 'Single',
-                'phone': '0561726349', 'email': 'obadiah@example.com', 'address': 'Accra',
-                'occupation': 'Student', 'school': 'University of Ghana', 'department': 'Deacon',
-                'role': 'Deacon', 'status': 'Active', 'baptism_status': 'Baptized',
-                'registration_date': '2025-03-05', 'emergency_contact_name': 'Peter Otoo',
-                'emergency_contact_phone': '0561726350', 'family_members': 2
-            }
-        ]
-        
-        # Add more sample members to reach 569 total as shown in screenshots
-        departments = ['Intercessors', 'Media', 'Administration', 'Ushering', 'Choir', 
-                      'Children', 'Protocol', 'Instrumentalist', 'New Breed', 'Welfare']
-        roles = ['Member', 'Worker', 'Deacon', 'Elder', 'Pastor', 'Usher', 'Teacher']
-        statuses = ['Active', 'Inactive', 'Visitor']
-        genders = ['Male', 'Female']
-        
-        for i in range(7, 570):
-            first_name = random.choice(['James', 'Mary', 'Peter', 'Esther', 'Daniel', 'Sarah', 'Paul', 'Ruth'])
-            last_name = random.choice(['Mensah', 'Asare', 'Owusu', 'Boateng', 'Adjei', 'Darko', 'Oppong'])
-            age = random.randint(5, 85)
-            birth_year = 2025 - age
-            birth_month = random.randint(1, 12)
-            birth_day = random.randint(1, 28)
-            
-            member = {
-                'member_id': f'M{i:03d}',
-                'first_name': first_name,
-                'last_name': last_name,
-                'full_name': f'{first_name} {last_name}',
-                'date_of_birth': f'{birth_year}-{birth_month:02d}-{birth_day:02d}',
-                'age': age,
-                'gender': random.choice(genders),
-                'marital_status': random.choice(['Single', 'Married', 'Divorced', 'Widowed']),
-                'phone': f'0{random.randint(20, 99)}{random.randint(1000000, 9999999)}',
-                'email': f'{first_name.lower()}.{last_name.lower()}@example.com',
-                'address': f'{random.randint(1, 999)} Street, City',
-                'occupation': random.choice(['Teacher', 'Engineer', 'Doctor', 'Business', 'Student', 'Retired']),
-                'school': '',
-                'department': random.choice(departments),
-                'role': random.choice(roles),
-                'status': random.choices(statuses, weights=[0.85, 0.10, 0.05])[0],
-                'baptism_status': random.choice(['Baptized', 'Not Baptized', 'Pending']),
-                'registration_date': f'2025-{random.randint(1,8):02d}-{random.randint(1,28):02d}',
-                'emergency_contact_name': f'Emergency Contact {i}',
-                'emergency_contact_phone': f'0{random.randint(20, 99)}{random.randint(1000000, 9999999)}',
-                'family_members': random.randint(0, 5)
-            }
-            sample_members.append(member)
-        
-        self.members_df = pd.DataFrame(sample_members)
+        # No sample data loaded - start with empty DataFrame
         print(f"✓ Member Manager initialized with {len(self.members_df)} members")
         
     def add_member(self, member_data):
@@ -459,8 +350,7 @@ class MemberManager:
         members_with_birthdays = self.members_df[
             pd.to_datetime(self.members_df['date_of_birth']).dt.month == today.month
         ]
-        # Simplified - in production would check actual day of month range
-        return len(members_with_birthdays[members_with_birthdays['date_of_birth'].notna()]) // 4  # Approximate
+        return len(members_with_birthdays[members_with_birthdays['date_of_birth'].notna()]) // 4 if len(members_with_birthdays) > 0 else 0
     
     def get_birthdays_this_month(self):
         """Get all members with birthdays in current month"""
@@ -471,10 +361,14 @@ class MemberManager:
         """Get gender distribution percentages"""
         gender_counts = self.members_df['gender'].value_counts()
         total = len(self.members_df)
+        if total == 0:
+            return {}
         return {gender: f"{(count/total)*100:.1f}%" for gender, count in gender_counts.items()}
     
     def get_age_distribution(self):
         """Get age distribution percentages"""
+        if len(self.members_df) == 0:
+            return {}
         bins = [0, 18, 36, 60, 120]
         labels = ['Under 18', '18-35', '36-60', 'Over 60']
         self.members_df['age_group'] = pd.cut(self.members_df['age'], bins=bins, labels=labels, right=False)
@@ -484,6 +378,8 @@ class MemberManager:
     
     def get_department_distribution(self):
         """Get department distribution"""
+        if len(self.members_df) == 0:
+            return pd.Series(), {}
         dept_counts = self.members_df['department'].value_counts()
         total = len(self.members_df)
         return dept_counts, {dept: f"{(count/total)*100:.1f}%" for dept, count in dept_counts.items()}
@@ -496,10 +392,13 @@ class MemberManager:
         print(f"Total Members: {len(self.members_df)} | Active: {len(self.members_df[self.members_df['status']=='Active'])} | New (30d): {self.get_new_members_count(30)}")
         print("\n" + "-"*70)
         
-        # Show first 10 members
-        display_df = self.members_df[['member_id', 'full_name', 'phone', 'department', 'role', 'status']].head(10)
-        print(display_df.to_string(index=False))
-        print(f"\nShowing 1 to 10 of {len(self.members_df)} members")
+        if len(self.members_df) > 0:
+            # Show first 10 members
+            display_df = self.members_df[['member_id', 'full_name', 'phone', 'department', 'role', 'status']].head(10)
+            print(display_df.to_string(index=False))
+            print(f"\nShowing 1 to {min(10, len(self.members_df))} of {len(self.members_df)} members")
+        else:
+            print("No members registered yet. Use the 'Add Member' function to register your first member.")
 
 # Initialize Member Manager
 cms.members = MemberManager()
@@ -519,41 +418,7 @@ class AttendanceManager:
             'status', 'check_in_time', 'check_in_method', 'department'
         ])
         self.qr_codes = {}  # Store active QR codes
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample attendance data"""
-        # Generate attendance for last 8 months as shown in screenshot
-        service_types = ['Sunday Morning', 'Wednesday Service', 'Friday Prayer', 'Youth Service']
-        members = list(range(1, 570))
-        start_date = datetime(2025, 1, 1)
-        
-        attendance_records = []
-        record_id = 1
-        
-        for month in range(8):  # Jan to Aug 2025
-            for week in range(4):  # 4 weeks per month
-                service_date = start_date + timedelta(days=month*30 + week*7)
-                if service_date > datetime.now():
-                    continue
-                    
-                # Random attendance (70-90% of members attend)
-                attending_members = random.sample(members, random.randint(int(0.7*len(members)), int(0.9*len(members))))
-                
-                for member_num in attending_members[:50]:  # Limit for sample
-                    attendance_records.append({
-                        'attendance_id': f'A{record_id:04d}',
-                        'member_id': f'M{member_num:03d}',
-                        'service_date': service_date.strftime('%Y-%m-%d'),
-                        'service_type': random.choice(service_types),
-                        'status': random.choices(['Present', 'Late', 'Absent'], weights=[0.7, 0.15, 0.15])[0],
-                        'check_in_time': (service_date.replace(hour=8, minute=random.randint(0, 30))).strftime('%H:%M') if random.random() > 0.2 else None,
-                        'check_in_method': random.choices(['QR Code', 'Manual', 'Check-in Desk'], weights=[0.4, 0.3, 0.3])[0],
-                        'department': random.choice(['Media', 'Choir', 'Ushering', 'None'])
-                    })
-                    record_id += 1
-        
-        self.attendance_df = pd.DataFrame(attendance_records)
+        # No sample data loaded
         print(f"✓ Attendance Manager initialized with {len(self.attendance_df)} attendance records")
     
     def generate_qr_code(self, service_type, service_date, validity_minutes=240):
@@ -600,7 +465,7 @@ class AttendanceManager:
         
         # Mark attendance
         new_id = f"A{len(self.attendance_df)+1:04d}"
-        self.attendance_df = pd.concat([self.attendance_df, pd.DataFrame([{
+        new_record = pd.DataFrame([{
             'attendance_id': new_id,
             'member_id': member_id,
             'service_date': qr['service_date'],
@@ -609,7 +474,8 @@ class AttendanceManager:
             'check_in_time': datetime.now().strftime('%H:%M'),
             'check_in_method': 'QR Code',
             'department': 'None'
-        }])], ignore_index=True)
+        }])
+        self.attendance_df = pd.concat([self.attendance_df, new_record], ignore_index=True)
         
         return True, "Attendance marked successfully"
     
@@ -619,6 +485,8 @@ class AttendanceManager:
     
     def get_attendance_trends(self, months=6):
         """Get attendance trends for last X months"""
+        if len(self.attendance_df) == 0:
+            return pd.Series()
         self.attendance_df['service_date'] = pd.to_datetime(self.attendance_df['service_date'])
         end_date = datetime.now()
         start_date = end_date - timedelta(days=months*30)
@@ -630,6 +498,9 @@ class AttendanceManager:
     
     def get_absent_members_alert(self, consecutive_sundays=3):
         """Find members absent for consecutive Sundays"""
+        if len(self.attendance_df) == 0:
+            return "No attendance records yet. Start tracking attendance to see insights."
+        
         sundays = self.attendance_df[pd.to_datetime(self.attendance_df['service_date']).dt.dayofweek == 6]
         
         # Group by member and count recent absences
@@ -638,7 +509,7 @@ class AttendanceManager:
         absent_members = absent_members[absent_members >= consecutive_sundays]
         
         if len(absent_members) == 0:
-            return "Excellent Attendance! No members have been absent for 3 consecutive Sundays. Everyone is faithfully attending!"
+            return "Excellent Attendance! No members have been absent for 3 consecutive Sundays."
         else:
             return f"Alert: {len(absent_members)} members missing {consecutive_sundays} consecutive services"
     
@@ -650,8 +521,11 @@ class AttendanceManager:
         
         trends = self.get_attendance_trends()
         print("\nMonthly Attendance:")
-        for month, count in trends.items():
-            print(f"  {month}: {count} attendees")
+        if len(trends) > 0:
+            for month, count in trends.items():
+                print(f"  {month}: {count} attendees")
+        else:
+            print("  No attendance records yet")
         
         print(f"\n{self.get_absent_members_alert()}")
         
@@ -660,12 +534,15 @@ class AttendanceManager:
         print("Department Attendance Distribution")
         print("-"*70)
         
-        dept_attendance = self.attendance_df.groupby('department').size().sort_values(ascending=False).head(10)
-        total = len(self.attendance_df)
-        
-        for dept, count in dept_attendance.items():
-            percentage = (count/total)*100
-            print(f"  {dept:<20}: {count:>4} ({percentage:.1f}%)")
+        if len(self.attendance_df) > 0:
+            dept_attendance = self.attendance_df.groupby('department').size().sort_values(ascending=False).head(10)
+            total = len(self.attendance_df)
+            
+            for dept, count in dept_attendance.items():
+                percentage = (count/total)*100
+                print(f"  {dept:<20}: {count:>4} ({percentage:.1f}%)")
+        else:
+            print("  No attendance records yet")
 
 # Initialize Attendance Manager
 cms.attendance = AttendanceManager()
@@ -688,45 +565,7 @@ class FinanceManager:
                                   'Kiosk Income', 'Project Donation', 'Partnership']
         self.expense_categories = ['Salaries', 'Utilities', 'Events', 'Maintenance', 
                                   'Equipment', 'Welfare', 'Miscellaneous']
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample financial data"""
-        transactions = []
-        
-        # Income transactions
-        for i in range(200):
-            date = datetime(2025, random.randint(1, 8), random.randint(1, 28))
-            amount = random.randint(50, 1000)
-            transactions.append({
-                'transaction_id': f'TX{i:04d}',
-                'date': date.strftime('%Y-%m-%d'),
-                'type': 'Income',
-                'category': random.choice(self.income_categories),
-                'amount': amount,
-                'member_id': f'M{random.randint(1, 100):03d}' if random.random() > 0.3 else None,
-                'description': f'{random.choice(self.income_categories)} payment',
-                'payment_method': random.choice(['Cash', 'Bank Transfer', 'Mobile Money', 'Card']),
-                'status': 'Completed'
-            })
-        
-        # Expense transactions
-        for i in range(50):
-            date = datetime(2025, random.randint(1, 8), random.randint(1, 28))
-            amount = random.randint(100, 2000)
-            transactions.append({
-                'transaction_id': f'TX{200+i:04d}',
-                'date': date.strftime('%Y-%m-%d'),
-                'type': 'Expense',
-                'category': random.choice(self.expense_categories),
-                'amount': -amount,  # Negative for expenses
-                'member_id': None,
-                'description': f'{random.choice(self.expense_categories)} payment',
-                'payment_method': random.choice(['Cash', 'Bank Transfer', 'Cheque']),
-                'status': 'Completed'
-            })
-        
-        self.transactions_df = pd.DataFrame(transactions)
+        # No sample data loaded
         print(f"✓ Finance Manager initialized with {len(self.transactions_df)} transactions")
     
     def add_transaction(self, transaction_data):
@@ -753,6 +592,8 @@ class FinanceManager:
     
     def get_monthly_overview(self, months=6):
         """Get monthly income and expenses for last X months"""
+        if len(self.transactions_df) == 0:
+            return pd.Series(), pd.Series()
         self.transactions_df['date'] = pd.to_datetime(self.transactions_df['date'])
         end_date = datetime.now()
         start_date = end_date - timedelta(days=months*30)
@@ -775,6 +616,9 @@ class FinanceManager:
             (self.transactions_df['category'] == 'Tithe') & 
             (self.transactions_df['member_id'].notna())
         ]
+        
+        if len(tithes) == 0:
+            return pd.DataFrame()
         
         contributors = tithes.groupby('member_id').agg({
             'amount': ['sum', 'count', 'mean'],
@@ -805,14 +649,20 @@ class FinanceManager:
         """)
         
         print("\nCATEGORY DASHBOARDS:")
-        income_cats = self.get_category_breakdown('Income').head(8)
-        for cat, amount in income_cats.items():
-            print(f"  • {cat}: R {amount:,.2f}")
+        if len(self.transactions_df) > 0:
+            income_cats = self.get_category_breakdown('Income').head(8)
+            for cat, amount in income_cats.items():
+                print(f"  • {cat}: R {amount:,.2f}")
+        else:
+            print("  No transactions yet")
         
         print("\nMONTHLY GIVING TRENDS (Last 6 months):")
         monthly_income, monthly_expenses = self.get_monthly_overview()
-        for month in monthly_income.index:
-            print(f"  {month}: Income: R {monthly_income[month]:>8,.2f} | Expenses: R {monthly_expenses.get(month, 0):>8,.2f}")
+        if len(monthly_income) > 0:
+            for month in monthly_income.index:
+                print(f"  {month}: Income: R {monthly_income[month]:>8,.2f} | Expenses: R {monthly_expenses.get(month, 0):>8,.2f}")
+        else:
+            print("  No monthly data yet")
 
 # Initialize Finance Manager
 cms.finance = FinanceManager()
@@ -841,67 +691,77 @@ class ChildrenMinistry:
             'Kingdom Kids': (3, 5),
             'Sunday Friends': (6, 12)
         }
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample children's data"""
-        children = []
-        
-        # 57 children as shown in screenshot
-        for i in range(57):
-            age = random.randint(0, 12)
-            gender = random.choice(['Male', 'Female'])
-            
-            # Determine class group
-            if age <= 2:
-                class_group = 'Small Blessings'
-            elif age <= 5:
-                class_group = 'Kingdom Kids'
-            else:
-                class_group = 'Sunday Friends'
-            
-            child = {
-                'child_id': f'C{i+1:03d}',
-                'full_name': random.choice(['James', 'Sarah', 'David', 'Esther', 'Michael', 'Grace', 'Samuel', 'Ruth']) + ' ' +
-                            random.choice(['Mensah', 'Asare', 'Owusu', 'Boateng']),
-                'date_of_birth': f'{2025-age}-{random.randint(1,12):02d}-{random.randint(1,28):02d}',
-                'age': age,
-                'gender': gender,
-                'parent_id': f'M{random.randint(1, 100):03d}',
-                'parent_name': f'Parent {i}',
-                'parent_phone': f'0{random.randint(20, 99)}{random.randint(1000000, 9999999)}',
-                'class_group': class_group,
-                'registration_date': f'2025-{random.randint(1,8):02d}-{random.randint(1,28):02d}',
-                'medical_notes': '' if random.random() > 0.1 else 'Has allergies',
-                'special_needs': 'No' if random.random() > 0.05 else 'Yes',
-                'status': 'Active'
-            }
-            children.append(child)
-        
-        self.children_df = pd.DataFrame(children)
-        
-        # Load attendance
-        attendance = []
-        for i in range(200):
-            child = random.choice(self.children_df['child_id'].tolist())
-            service_date = datetime(2025, random.randint(1, 8), random.randint(1, 28))
-            attendance.append({
-                'attendance_id': f'CA{i+1:04d}',
-                'child_id': child,
-                'service_date': service_date.strftime('%Y-%m-%d'),
-                'check_in_time': service_date.replace(hour=9, minute=random.randint(0, 30)).strftime('%H:%M'),
-                'check_out_time': service_date.replace(hour=12, minute=random.randint(0, 30)).strftime('%H:%M') if random.random() > 0.3 else None,
-                'status': random.choice(['Present', 'Late', 'Absent']),
-                'checked_in_by': 'Parent' if random.random() > 0.5 else 'Volunteer'
-            })
-        
-        self.children_attendance = pd.DataFrame(attendance)
+        # No sample data loaded
         print(f"✓ Children's Ministry initialized with {len(self.children_df)} children")
+    
+    def add_child(self, child_data):
+        """Add a new child"""
+        new_id = f"C{len(self.children_df)+1:03d}"
+        child_data['child_id'] = new_id
+        child_data['registration_date'] = datetime.now().strftime('%Y-%m-%d')
+        
+        # Calculate age from DOB if provided
+        if 'date_of_birth' in child_data and child_data['date_of_birth']:
+            dob = datetime.strptime(child_data['date_of_birth'], '%Y-%m-%d')
+            today = datetime.now()
+            child_data['age'] = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            
+            # Determine class group based on age
+            if child_data['age'] <= 2:
+                child_data['class_group'] = 'Small Blessings'
+            elif child_data['age'] <= 5:
+                child_data['class_group'] = 'Kingdom Kids'
+            else:
+                child_data['class_group'] = 'Sunday Friends'
+        
+        self.children_df = pd.concat([self.children_df, pd.DataFrame([child_data])], ignore_index=True)
+        return new_id
+    
+    def check_in_child(self, child_id, checked_in_by='Parent'):
+        """Check in a child for service"""
+        attendance_id = f"CA{len(self.children_attendance)+1:04d}"
+        today = datetime.now().strftime('%Y-%m-%d')
+        
+        # Check if already checked in today
+        existing = self.children_attendance[
+            (self.children_attendance['child_id'] == child_id) & 
+            (self.children_attendance['service_date'] == today)
+        ]
+        
+        if len(existing) > 0:
+            return False, "Child already checked in today"
+        
+        attendance_record = pd.DataFrame([{
+            'attendance_id': attendance_id,
+            'child_id': child_id,
+            'service_date': today,
+            'check_in_time': datetime.now().strftime('%H:%M'),
+            'check_out_time': None,
+            'status': 'Checked In',
+            'checked_in_by': checked_in_by
+        }])
+        
+        self.children_attendance = pd.concat([self.children_attendance, attendance_record], ignore_index=True)
+        return True, attendance_id
+    
+    def check_out_child(self, child_id):
+        """Check out a child"""
+        today = datetime.now().strftime('%Y-%m-%d')
+        
+        # Find today's check-in
+        mask = (self.children_attendance['child_id'] == child_id) & (self.children_attendance['service_date'] == today)
+        
+        if len(self.children_attendance[mask]) == 0:
+            return False, "No check-in found for today"
+        
+        self.children_attendance.loc[mask, 'check_out_time'] = datetime.now().strftime('%H:%M')
+        self.children_attendance.loc[mask, 'status'] = 'Checked Out'
+        
+        return True, "Child checked out successfully"
     
     def get_age_group_distribution(self):
         """Get distribution by age group"""
-        distribution = self.children_df['class_group'].value_counts()
-        return distribution
+        return self.children_df['class_group'].value_counts()
     
     def get_recent_checkins(self, date=None):
         """Get recent check-ins for real-time tracking"""
@@ -913,6 +773,14 @@ class ChildrenMinistry:
     
     def get_attendance_analytics(self, period='weekly'):
         """Get attendance analytics"""
+        if len(self.children_attendance) == 0:
+            return {
+                'total_attendance': 0,
+                'qr_adoption': "0%",
+                'active_children': 0,
+                'avg_per_service': "0"
+            }
+        
         self.children_attendance['service_date'] = pd.to_datetime(self.children_attendance['service_date'])
         
         if period == 'weekly':
@@ -944,8 +812,8 @@ class ChildrenMinistry:
         
         age_dist = self.get_age_group_distribution()
         total_children = len(self.children_df)
-        new_children = len(self.children_df[pd.to_datetime(self.children_df['registration_date']) >= (datetime.now() - timedelta(days=30))])
-        birthday_celebrations = len(self.children_df[pd.to_datetime(self.children_df['date_of_birth']).dt.month == datetime.now().month])
+        new_children = len(self.children_df[pd.to_datetime(self.children_df['registration_date']) >= (datetime.now() - timedelta(days=30))]) if len(self.children_df) > 0 else 0
+        birthday_celebrations = len(self.children_df[pd.to_datetime(self.children_df['date_of_birth']).dt.month == datetime.now().month]) if len(self.children_df) > 0 else 0
         
         print(f"""
 ┌─────────────────────────────────────────────────────┐
@@ -955,15 +823,19 @@ class ChildrenMinistry:
         """)
         
         print("\nCHILDREN BY AGE GROUP:")
-        for group, count in age_dist.items():
-            print(f"  • {group}: {count} children")
+        if len(age_dist) > 0:
+            for group, count in age_dist.items():
+                print(f"  • {group}: {count} children")
+        else:
+            print("  No children registered yet")
         
         print("\nREAL-TIME ATTENDANCE TRACKING:")
         print("  Live Updates Active")
         print(f"  Last updated: {datetime.now().strftime('%H:%M:%S')}")
         
         analytics = self.get_attendance_analytics('weekly')
-        print(f"\n  Total Checked In Today: {len(self.get_recent_checkins())}")
+        today_checkins = self.get_recent_checkins()
+        print(f"\n  Total Checked In Today: {len(today_checkins)}")
         print(f"  QR Adoption: {analytics['qr_adoption']}")
         print(f"  Active Children: {analytics['active_children']}")
 
@@ -988,64 +860,7 @@ class VisitorManager:
         self.follow_ups = pd.DataFrame(columns=[
             'follow_up_id', 'visitor_id', 'date', 'type', 'notes', 'conducted_by'
         ])
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample visitor data"""
-        visitors = [
-            {
-                'visitor_id': 'V001',
-                'full_name': 'Patrick Smith',
-                'phone': '+27634772587',
-                'email': 'patrick.smith@example.com',
-                'address': '6238 EXTENSION 2',
-                'first_visit_date': '2025-08-27',
-                'heard_from': 'Website',
-                'status': 'In follow up',
-                'registered_by': 'System',
-                'converted_to_member': False,
-                'conversion_date': None,
-                'follow_up_notes': 'Welcome SMS sent'
-            },
-            {
-                'visitor_id': 'V002',
-                'full_name': 'Smoke Tester',
-                'phone': '+27721234567',
-                'email': 'smoke.tester@example.com',
-                'address': 'Test Address',
-                'first_visit_date': '2025-08-13',
-                'heard_from': 'Friend',
-                'status': 'In follow up',
-                'registered_by': 'System',
-                'converted_to_member': False,
-                'conversion_date': None,
-                'follow_up_notes': 'First contact made'
-            }
-        ]
-        
-        self.visitors_df = pd.DataFrame(visitors)
-        
-        # Sample follow-ups
-        follow_ups = [
-            {
-                'follow_up_id': 'F001',
-                'visitor_id': 'V001',
-                'date': '2025-08-27',
-                'type': 'SMS',
-                'notes': 'Welcome SMS sent: Dear Patrick, welcome to Winners Arena International!',
-                'conducted_by': 'Patrick'
-            },
-            {
-                'follow_up_id': 'F002',
-                'visitor_id': 'V001',
-                'date': '2025-08-27',
-                'type': 'Phone Call',
-                'notes': 'Called visitor within 48 hours of visit',
-                'conducted_by': 'Patrick'
-            }
-        ]
-        
-        self.follow_ups = pd.DataFrame(follow_ups)
+        # No sample data loaded
         print(f"✓ Visitor Manager initialized with {len(self.visitors_df)} visitors")
     
     def register_visitor(self, visitor_data):
@@ -1089,14 +904,16 @@ class VisitorManager:
         print("="*70)
         print("Track and manage church visitors\n")
         
-        print("Visitors:")
-        for _, visitor in self.visitors_df.iterrows():
-            initials = ''.join([name[0] for name in visitor['full_name'].split()[:2]])
-            print(f"""
+        if len(self.visitors_df) == 0:
+            print("No visitors registered yet. Use 'Register New Visitor' to add your first visitor.")
+        else:
+            for _, visitor in self.visitors_df.iterrows():
+                initials = ''.join([name[0] for name in visitor['full_name'].split()[:2]])
+                print(f"""
   {initials}  {visitor['full_name']}
      Heard from: {visitor['heard_from']} | {visitor['phone']}
      First Visit: {visitor['first_visit_date']} | Status: {visitor['status']}
-            """)
+                """)
         
         print("\n" + "-"*50)
         print(f"Showing 1 to {len(self.visitors_df)} of {len(self.visitors_df)} visitors")
@@ -1123,96 +940,7 @@ class ProgramManager:
         self.guests_df = pd.DataFrame(columns=[
             'guest_id', 'program_id', 'name', 'role', 'title', 'notes'
         ])
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample program data"""
-        programs = [
-            {
-                'program_id': 'P001',
-                'name': 'Fresh Oil',
-                'description': 'This is the first program we have during the beginning of the year',
-                'start_date': '2025-07-15',
-                'end_date': '2025-07-21',
-                'start_time': '15:53',
-                'end_time': '20:00',
-                'location': 'church',
-                'coordinator': 'Emmanuel sarpong',
-                'department': 'Media Ministry',
-                'status': 'Completed',
-                'budget': 300.00,
-                'expected_attendees': 200,
-                'priority': 'High',
-                'registration_required': True
-            },
-            {
-                'program_id': 'P002',
-                'name': 'Greater Works',
-                'description': 'Annual conference',
-                'start_date': '2025-07-22',
-                'end_date': '2025-07-25',
-                'start_time': '09:00',
-                'end_time': '17:00',
-                'location': 'IGGC',
-                'coordinator': 'Emmanuel sarpong',
-                'department': 'All',
-                'status': 'Completed',
-                'budget': 500.00,
-                'expected_attendees': 300,
-                'priority': 'High',
-                'registration_required': True
-            },
-            {
-                'program_id': 'P003',
-                'name': 'Godclass',
-                'description': 'Fellowship Event',
-                'start_date': '2025-08-10',
-                'end_date': '2025-08-10',
-                'start_time': '10:00',
-                'end_time': '13:00',
-                'location': 'Church Hall',
-                'coordinator': 'John Doe',
-                'department': 'Fellowship',
-                'status': 'In progress',
-                'budget': 100.00,
-                'expected_attendees': 150,
-                'priority': 'Medium',
-                'registration_required': False
-            },
-            {
-                'program_id': 'P004',
-                'name': 'Money Sunday',
-                'description': 'Special Weekend',
-                'start_date': '2025-08-27',
-                'end_date': '2025-08-27',
-                'start_time': '08:30',
-                'end_time': '12:00',
-                'location': 'Main Auditorium',
-                'coordinator': 'Patrick South',
-                'department': 'Finance',
-                'status': 'Planned',
-                'budget': 200.00,
-                'expected_attendees': 250,
-                'priority': 'High',
-                'registration_required': True
-            }
-        ]
-        
-        self.programs_df = pd.DataFrame(programs)
-        
-        # Add guests
-        guests = [
-            {
-                'guest_id': 'G001',
-                'program_id': 'P001',
-                'name': 'Rev. Enoch Paul Hayes',
-                'role': 'Guest Speaker',
-                'title': 'head pastor',
-                'notes': ''
-            }
-        ]
-        
-        self.guests_df = pd.DataFrame(guests)
+        # No sample data loaded
         print(f"✓ Program Manager initialized with {len(self.programs_df)} programs")
     
     def create_program(self, program_data):
@@ -1222,6 +950,14 @@ class ProgramManager:
         program_data['status'] = 'Planned'
         self.programs_df = pd.concat([self.programs_df, pd.DataFrame([program_data])], ignore_index=True)
         return new_id
+    
+    def add_guest(self, program_id, guest_data):
+        """Add a guest speaker to a program"""
+        guest_id = f"G{len(self.guests_df)+1:03d}"
+        guest_data['guest_id'] = guest_id
+        guest_data['program_id'] = program_id
+        self.guests_df = pd.concat([self.guests_df, pd.DataFrame([guest_data])], ignore_index=True)
+        return guest_id
     
     def get_upcoming_programs(self):
         """Get upcoming programs"""
@@ -1275,98 +1011,7 @@ class EquipmentManager:
         self.maintenance_log = pd.DataFrame(columns=[
             'log_id', 'equipment_id', 'date', 'type', 'description', 'cost', 'performed_by'
         ])
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample equipment data"""
-        equipment = [
-            {
-                'equipment_id': 'E001',
-                'name': 'TV Screen',
-                'category': 'media',
-                'status': 'Excellent',
-                'purchase_date': '2025-08-27',
-                'purchase_price': 2500.00,
-                'location': 'Main Auditorium',
-                'assigned_to': None,
-                'last_maintenance': '2025-08-27',
-                'next_maintenance': '2025-11-27',
-                'notes': '4K LED Screen',
-                'qr_code': 'qr_e001'
-            },
-            {
-                'equipment_id': 'E002',
-                'name': 'Camera',
-                'category': 'media',
-                'status': 'Good',
-                'purchase_date': '2025-08-26',
-                'purchase_price': 1800.00,
-                'location': 'Media Room',
-                'assigned_to': 'John Doe',
-                'last_maintenance': '2025-08-26',
-                'next_maintenance': '2025-11-26',
-                'notes': 'DSLR Camera',
-                'qr_code': 'qr_e002'
-            },
-            {
-                'equipment_id': 'E003',
-                'name': 'Keyboard',
-                'category': 'instruments',
-                'status': 'Excellent',
-                'purchase_date': '2025-08-26',
-                'purchase_price': 1200.00,
-                'location': 'Choir',
-                'assigned_to': 'Music Team',
-                'last_maintenance': '2025-08-26',
-                'next_maintenance': '2025-11-26',
-                'notes': 'Yamaha Keyboard',
-                'qr_code': 'qr_e003'
-            },
-            {
-                'equipment_id': 'E004',
-                'name': 'Smart screen',
-                'category': 'media',
-                'status': 'Excellent',
-                'purchase_date': '2025-08-25',
-                'purchase_price': 3000.00,
-                'location': 'Foyer',
-                'assigned_to': None,
-                'last_maintenance': '2025-08-25',
-                'next_maintenance': '2025-11-25',
-                'notes': 'Interactive Display',
-                'qr_code': 'qr_e004'
-            },
-            {
-                'equipment_id': 'E005',
-                'name': 'Keyboard',
-                'category': 'cctv_camera',
-                'status': 'Excellent',
-                'purchase_date': '2021-02-02',
-                'purchase_price': 350.00,
-                'location': 'Security Room',
-                'assigned_to': 'Security',
-                'last_maintenance': '2025-08-01',
-                'next_maintenance': '2025-11-01',
-                'notes': 'CCTV Keyboard Controller',
-                'qr_code': 'qr_e005'
-            },
-            {
-                'equipment_id': 'E006',
-                'name': 'Hp Desktop pc',
-                'category': 'media',
-                'status': 'Excellent',
-                'purchase_date': '2021-06-02',
-                'purchase_price': 850.00,
-                'location': 'Media Room',
-                'assigned_to': 'Media Team',
-                'last_maintenance': '2025-08-15',
-                'next_maintenance': '2025-11-15',
-                'notes': 'HP Desktop for editing',
-                'qr_code': 'qr_e006'
-            }
-        ]
-        
-        self.equipment_df = pd.DataFrame(equipment)
+        # No sample data loaded
         print(f"✓ Equipment Manager initialized with {len(self.equipment_df)} equipment items")
     
     def add_equipment(self, equipment_data):
@@ -1395,7 +1040,6 @@ class EquipmentManager:
         print(f"Location: {equipment['location']}")
         print(f"Purchase Date: {equipment['purchase_date']}")
         print(f"\nScan this QR code to view equipment details")
-        print(f"URL: https://cms.church/qr/equipment/{equipment_id}")
         print(f"{'='*50}")
         
         return f"qr_{equipment_id}"
@@ -1420,13 +1064,16 @@ class EquipmentManager:
         print("="*70)
         print(f"Total Items: {len(self.equipment_df)}\n")
         
-        print(f"{'NAME':<20} {'CATEGORY':<15} {'STATUS':<10} {'PURCHASE DATE':<15}")
-        print("-"*60)
-        
-        for _, item in self.equipment_df.iterrows():
-            print(f"{item['name']:<20} {item['category']:<15} {item['status']:<10} {item['purchase_date']:<15}")
-        
-        print(f"\nShowing 1 to {len(self.equipment_df)} of {len(self.equipment_df)} items")
+        if len(self.equipment_df) > 0:
+            print(f"{'NAME':<20} {'CATEGORY':<15} {'STATUS':<10} {'PURCHASE DATE':<15}")
+            print("-"*60)
+            
+            for _, item in self.equipment_df.iterrows():
+                print(f"{item['name']:<20} {item['category']:<15} {item['status']:<10} {item['purchase_date']:<15}")
+            
+            print(f"\nShowing 1 to {len(self.equipment_df)} of {len(self.equipment_df)} items")
+        else:
+            print("No equipment items registered yet. Use 'Add Equipment' to add your first item.")
 
 # Initialize Equipment Manager
 cms.equipment = EquipmentManager()
@@ -1453,80 +1100,7 @@ class GroupManager:
             'session_id', 'group_id', 'member_id', 'counselor_id', 'date',
             'time', 'type', 'notes', 'status'
         ])
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample group data"""
-        groups = [
-            {
-                'group_id': 'G001',
-                'name': 'MVV Men\'s Group',
-                'description': 'Men\'s fellowship and support group',
-                'category': 'Men',
-                'leader_id': 'M001',
-                'leader_name': 'Keith Mathibela',
-                'meeting_schedule': 'Saturdays 4:00 PM',
-                'meeting_location': 'Room 101',
-                'status': 'Active',
-                'created_date': '2025-01-15',
-                'member_count': 3
-            },
-            {
-                'group_id': 'G002',
-                'name': 'Intercessory Prayer',
-                'description': 'Prayer is ongoing',
-                'category': 'Prayer',
-                'leader_id': 'M003',
-                'leader_name': 'John Odabor',
-                'meeting_schedule': 'Wednesdays 6:00 PM',
-                'meeting_location': 'Prayer Room',
-                'status': 'Active',
-                'created_date': '2025-02-10',
-                'member_count': 8
-            },
-            {
-                'group_id': 'G003',
-                'name': 'DigitalConnect',
-                'description': 'Prayer is ongoing',
-                'category': 'Youth',
-                'leader_id': 'M002',
-                'leader_name': 'Nii Ankrah',
-                'meeting_schedule': 'Fridays 7:00 PM',
-                'meeting_location': 'Online',
-                'status': 'Active',
-                'created_date': '2025-03-05',
-                'member_count': 5
-            }
-        ]
-        
-        self.groups_df = pd.DataFrame(groups)
-        
-        # Group members
-        group_members = [
-            {'group_member_id': 'GM001', 'group_id': 'G001', 'member_id': 'M001', 'joined_date': '2025-08-27', 'role': 'Leader', 'status': 'Active'},
-            {'group_member_id': 'GM002', 'group_id': 'G001', 'member_id': 'M004', 'joined_date': '2025-08-22', 'role': 'Member', 'status': 'Active'},
-            {'group_member_id': 'GM003', 'group_id': 'G001', 'member_id': 'M002', 'joined_date': '2025-08-22', 'role': 'Member', 'status': 'Active'},
-            {'group_member_id': 'GM004', 'group_id': 'G001', 'member_id': 'M003', 'joined_date': '2025-08-15', 'role': 'Member', 'status': 'Active'},
-        ]
-        
-        self.group_members = pd.DataFrame(group_members)
-        
-        # Counseling sessions
-        counseling = [
-            {
-                'session_id': 'CS001',
-                'group_id': 'G001',
-                'member_id': 'M001',
-                'counselor_id': 'M003',
-                'date': '2025-08-28',
-                'time': '15:00',
-                'type': 'Individual',
-                'notes': 'Initial session',
-                'status': 'Completed'
-            }
-        ]
-        
-        self.counseling_sessions = pd.DataFrame(counseling)
+        # No sample data loaded
         print(f"✓ Group Manager initialized with {len(self.groups_df)} groups")
     
     def create_group(self, group_data):
@@ -1567,6 +1141,21 @@ class GroupManager:
         
         return True, new_id
     
+    def remove_member_from_group(self, group_id, member_id):
+        """Remove a member from a group"""
+        before = len(self.group_members)
+        self.group_members = self.group_members[
+            ~((self.group_members['group_id'] == group_id) & (self.group_members['member_id'] == member_id))
+        ]
+        
+        if len(self.group_members) < before:
+            # Update member count
+            count = len(self.group_members[self.group_members['group_id'] == group_id])
+            self.groups_df.loc[self.groups_df['group_id'] == group_id, 'member_count'] = count
+            return True, "Member removed from group"
+        
+        return False, "Member not found in group"
+    
     def book_counseling(self, group_id, member_id, counselor_id, session_type, notes=""):
         """Book a counseling session"""
         session_id = f"CS{len(self.counseling_sessions)+1:04d}"
@@ -1592,21 +1181,27 @@ class GroupManager:
         print("="*70)
         
         assigned_groups = len(self.groups_df)
-        assigned_users = len(self.group_members['member_id'].unique())
+        assigned_users = len(self.group_members['member_id'].unique()) if len(self.group_members) > 0 else 0
         
         print(f"""
 Assigned Groups: {assigned_groups:<12} Unassigned Groups: 0
 Available Users: {assigned_users:<12}
         """)
         
-        print("\nCURRENT ASSIGNMENTS:")
-        print(f"{'GROUP':<20} {'ASSIGNED USER':<15} {'ASSIGNED DATE':<15} {'ASSIGNED BY':<15}")
-        print("-"*65)
-        
-        for _, group in self.groups_df.head(4).iterrows():
-            members = self.group_members[self.group_members['group_id'] == group['group_id']]
-            for _, member in members.iterrows():
-                print(f"{group['name'][:18]:<20} {member['member_id']:<15} {member['joined_date']:<15} System")
+        if len(self.groups_df) > 0:
+            print("\nCURRENT ASSIGNMENTS:")
+            print(f"{'GROUP':<20} {'ASSIGNED USER':<15} {'ASSIGNED DATE':<15} {'ASSIGNED BY':<15}")
+            print("-"*65)
+            
+            for _, group in self.groups_df.head(4).iterrows():
+                members = self.group_members[self.group_members['group_id'] == group['group_id']]
+                if len(members) > 0:
+                    for _, member in members.iterrows():
+                        print(f"{group['name'][:18]:<20} {member['member_id']:<15} {member['joined_date']:<15} System")
+                else:
+                    print(f"{group['name'][:18]:<20} {'No members':<15} {'-':<15} System")
+        else:
+            print("\nNo groups created yet. Use 'Create Group' to add your first group.")
 
 # Initialize Group Manager
 cms.groups = GroupManager()
@@ -1626,11 +1221,7 @@ class PrayerLineManager:
             'description', 'submitted_date', 'status', 'assigned_to',
             'prayed_by', 'prayed_date', 'notes'
         ])
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample prayer requests"""
-        # No requests initially as shown in screenshot
+        # No sample data loaded
         print(f"✓ Prayer Line Manager initialized with {len(self.prayer_requests)} requests")
     
     def submit_request(self, member_id=None, anonymous=False, request_type="Prayer", description=""):
@@ -1687,32 +1278,61 @@ class WelfareManager:
             'claim_id', 'member_id', 'amount', 'claim_date',
             'reason', 'status', 'approved_by', 'disbursed_date', 'notes'
         ])
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample welfare data"""
-        # Payments
-        payments = [
-            {'payment_id': 'WP001', 'member_id': 'M006', 'amount': 10.00, 'payment_date': '2025-08-16', 
-             'payment_method': 'Cash', 'month': 8, 'year': 2025, 'status': 'Completed', 'received_by': 'Treasurer'},
-            {'payment_id': 'WP002', 'member_id': 'M003', 'amount': 400.00, 'payment_date': '2025-08-10',
-             'payment_method': 'Cash', 'month': 8, 'year': 2025, 'status': 'Completed', 'received_by': 'Treasurer'},
-            {'payment_id': 'WP003', 'member_id': 'M004', 'amount': 87.00, 'payment_date': '2025-08-10',
-             'payment_method': 'Bank Transfer', 'month': 8, 'year': 2025, 'status': 'Completed', 'received_by': 'System'},
-            {'payment_id': 'WP004', 'member_id': 'M001', 'amount': 180.00, 'payment_date': '2025-08-05',
-             'payment_method': 'Mobile Money', 'month': 8, 'year': 2025, 'status': 'Completed', 'received_by': 'Treasurer'}
-        ]
-        
-        self.welfare_payments = pd.DataFrame(payments)
-        
-        # Claims
-        claims = [
-            {'claim_id': 'WC001', 'member_id': 'M005', 'amount': 72.00, 'claim_date': '2025-08-10',
-             'reason': 'Emergency', 'status': 'Disbursed', 'approved_by': 'Pastor', 'disbursed_date': '2025-08-11', 'notes': ''}
-        ]
-        
-        self.welfare_claims = pd.DataFrame(claims)
+        # No sample data loaded
         print(f"✓ Welfare Manager initialized with {len(self.welfare_payments)} payments, {len(self.welfare_claims)} claims")
+    
+    def record_payment(self, member_id, amount, payment_method, month=None, year=None):
+        """Record a welfare payment"""
+        if month is None:
+            month = datetime.now().month
+        if year is None:
+            year = datetime.now().year
+            
+        payment_id = f"WP{len(self.welfare_payments)+1:04d}"
+        payment = {
+            'payment_id': payment_id,
+            'member_id': member_id,
+            'amount': amount,
+            'payment_date': datetime.now().strftime('%Y-%m-%d'),
+            'payment_method': payment_method,
+            'month': month,
+            'year': year,
+            'status': 'Completed',
+            'received_by': 'System'
+        }
+        
+        self.welfare_payments = pd.concat([self.welfare_payments, pd.DataFrame([payment])], ignore_index=True)
+        return payment_id
+    
+    def submit_claim(self, member_id, amount, reason):
+        """Submit a welfare claim"""
+        claim_id = f"WC{len(self.welfare_claims)+1:04d}"
+        claim = {
+            'claim_id': claim_id,
+            'member_id': member_id,
+            'amount': amount,
+            'claim_date': datetime.now().strftime('%Y-%m-%d'),
+            'reason': reason,
+            'status': 'Pending',
+            'approved_by': None,
+            'disbursed_date': None,
+            'notes': ''
+        }
+        
+        self.welfare_claims = pd.concat([self.welfare_claims, pd.DataFrame([claim])], ignore_index=True)
+        return claim_id
+    
+    def approve_claim(self, claim_id, approved_by):
+        """Approve a welfare claim"""
+        self.welfare_claims.loc[self.welfare_claims['claim_id'] == claim_id, 'status'] = 'Approved'
+        self.welfare_claims.loc[self.welfare_claims['claim_id'] == claim_id, 'approved_by'] = approved_by
+        return True
+    
+    def disburse_claim(self, claim_id):
+        """Mark a claim as disbursed"""
+        self.welfare_claims.loc[self.welfare_claims['claim_id'] == claim_id, 'status'] = 'Disbursed'
+        self.welfare_claims.loc[self.welfare_claims['claim_id'] == claim_id, 'disbursed_date'] = datetime.now().strftime('%Y-%m-%d')
+        return True
     
     def get_monthly_summary(self, month=None, year=2025):
         """Get monthly welfare summary"""
@@ -1729,10 +1349,10 @@ class WelfareManager:
             (pd.to_datetime(self.welfare_claims['claim_date']).dt.year == year)
         ]
         
-        total_collected = month_payments['amount'].sum()
-        total_disbursed = month_claims[month_claims['status'] == 'Disbursed']['amount'].sum()
+        total_collected = month_payments['amount'].sum() if len(month_payments) > 0 else 0
+        total_disbursed = month_claims[month_claims['status'] == 'Disbursed']['amount'].sum() if len(month_claims) > 0 else 0
         paid_count = len(month_payments)
-        claimed_count = len(month_claims[month_claims['status'] == 'Disbursed'])
+        claimed_count = len(month_claims[month_claims['status'] == 'Disbursed']) if len(month_claims) > 0 else 0
         
         return {
             'total_collected': total_collected,
@@ -1750,7 +1370,7 @@ class WelfareManager:
         print("MONTHLY WELFARE MANAGEMENT")
         print("="*70)
         
-        summary = self.get_monthly_summary(8, 2025)  # August 2025
+        summary = self.get_monthly_summary(datetime.now().month, datetime.now().year)
         
         print(f"""
 ┌─────────────────────────────────────────────────────┐
@@ -1760,17 +1380,19 @@ class WelfareManager:
 └─────────────────────────────────────────────────────┘
         """)
         
-        print("\nMEMBERS WHO PAID THIS MONTH:")
-        for _, payment in summary['payments'].iterrows():
-            member = cms.members.get_member(payment['member_id'])
-            if member is not None:
-                print(f"  • {member['full_name']:<20} {payment['payment_date']} - {payment['payment_method']:<12} R {payment['amount']:>6,.2f}")
+        if len(summary['payments']) > 0:
+            print("\nMEMBERS WHO PAID THIS MONTH:")
+            for _, payment in summary['payments'].iterrows():
+                print(f"  • Member {payment['member_id']:<15} {payment['payment_date']} - {payment['payment_method']:<12} R {payment['amount']:>6,.2f}")
+        else:
+            print("\nNo payments recorded this month.")
         
-        print("\nMEMBERS WHO CLAIMED THIS MONTH:")
-        for _, claim in summary['claims'].iterrows():
-            member = cms.members.get_member(claim['member_id'])
-            if member is not None:
-                print(f"  • {member['full_name']:<20} {claim['claim_date']} - Disbursed")
+        if len(summary['claims']) > 0:
+            print("\nMEMBERS WHO CLAIMED THIS MONTH:")
+            for _, claim in summary['claims'].iterrows():
+                print(f"  • Member {claim['member_id']:<15} {claim['claim_date']} - {claim['status']}")
+        else:
+            print("\nNo claims this month.")
 
 # Initialize modules
 cms.prayer = PrayerLineManager()
@@ -1780,7 +1402,7 @@ cms.welfare = WelfareManager()
 # In[26]:
 
 
-# Step 12: Partnership and SMS Modules (CORRECTED VERSION)
+# Step 12: Partnership and SMS Modules
 
 class PartnershipManager:
     """Manage church partnerships and contributions"""
@@ -1795,73 +1417,50 @@ class PartnershipManager:
             'contribution_id', 'partner_id', 'date', 'amount', 'type', 'notes'
         ])
         self.tiers = ['Entry Level', 'Gold Partners', 'Diamond Partners', 'Bronze Partners']
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample partnership data"""
-        partners_data = [
-            {'partner_id': 'PT001', 'name': 'John Obeng', 'type': 'Individual', 'tier': 'Gold Partners',
-             'contact_person': 'Self', 'phone': '0598046821', 'email': 'jobeng@yahoo.com',
-             'join_date': '2025-01-15', 'status': 'Active', 'total_contributions': 899.00},
-            {'partner_id': 'PT002', 'name': 'Sarpongs Emmas', 'type': 'Individual', 'tier': 'Gold Partners',
-             'contact_person': 'Self', 'phone': '2030455777', 'email': 'saop@gmail.com',
-             'join_date': '2025-02-10', 'status': 'Active', 'total_contributions': 700.00},
-            {'partner_id': 'PT003', 'name': 'Michael Bolten', 'type': 'Individual', 'tier': 'Diamond Partners',
-             'contact_person': 'Self', 'phone': '+2332466701191', 'email': 'bolt@gmail.com',
-             'join_date': '2025-03-05', 'status': 'Active', 'total_contributions': 400.00},
-            {'partner_id': 'PT004', 'name': 'Patrick South', 'type': 'Individual', 'tier': 'Diamond Partners',
-             'contact_person': 'Self', 'phone': '+27815425484', 'email': 'Patrick@gmail.com',
-             'join_date': '2025-03-20', 'status': 'Active', 'total_contributions': 345.00},
-            {'partner_id': 'PT005', 'name': 'ABC Company', 'type': 'Corporate', 'tier': 'Diamond Partners',
-             'contact_person': 'John Doe', 'phone': '0234567890', 'email': 'info@abc.com',
-             'join_date': '2025-04-12', 'status': 'Active', 'total_contributions': 5000.00},
-            {'partner_id': 'PT006', 'name': 'XYZ Ltd', 'type': 'Corporate', 'tier': 'Gold Partners',
-             'contact_person': 'Jane Smith', 'phone': '0234567891', 'email': 'info@xyz.com',
-             'join_date': '2025-05-08', 'status': 'Active', 'total_contributions': 3000.00}
-        ]
-        
-        # Create DataFrame from the list
-        self.partners_df = pd.DataFrame(partners_data)
-        
-        # Add contributions
-        contributions = []
-        contribution_id = 1
-        
-        # Iterate through the DataFrame rows properly
-        for idx, partner in self.partners_df.head(4).iterrows():
-            num_payments = int(partner['total_contributions'] // 200) + 1
-            remaining = partner['total_contributions']
-            
-            for j in range(num_payments):
-                amount = min(200, remaining)
-                if amount > 0:
-                    contribution = {
-                        'contribution_id': f'PC{contribution_id:04d}',
-                        'partner_id': partner['partner_id'],
-                        'date': f'2025-{random.randint(1,8):02d}-{random.randint(1,28):02d}',
-                        'amount': amount,
-                        'type': 'Monthly',
-                        'notes': ''
-                    }
-                    contributions.append(contribution)
-                    remaining -= amount
-                    contribution_id += 1
-        
-        if contributions:
-            self.partner_contributions = pd.DataFrame(contributions)
-        else:
-            self.partner_contributions = pd.DataFrame(columns=['contribution_id', 'partner_id', 'date', 'amount', 'type', 'notes'])
-            
+        # No sample data loaded
         print(f"✓ Partnership Manager initialized with {len(self.partners_df)} partners")
+    
+    def add_partner(self, partner_data):
+        """Add a new partner"""
+        partner_id = f"PT{len(self.partners_df)+1:04d}"
+        partner_data['partner_id'] = partner_id
+        partner_data['join_date'] = datetime.now().strftime('%Y-%m-%d')
+        partner_data['status'] = 'Active'
+        partner_data['total_contributions'] = 0
+        
+        self.partners_df = pd.concat([self.partners_df, pd.DataFrame([partner_data])], ignore_index=True)
+        return partner_id
+    
+    def record_contribution(self, partner_id, amount, contribution_type='Monthly', notes=''):
+        """Record a contribution from a partner"""
+        contribution_id = f"PC{len(self.partner_contributions)+1:04d}"
+        contribution = {
+            'contribution_id': contribution_id,
+            'partner_id': partner_id,
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'amount': amount,
+            'type': contribution_type,
+            'notes': notes
+        }
+        
+        self.partner_contributions = pd.concat([self.partner_contributions, pd.DataFrame([contribution])], ignore_index=True)
+        
+        # Update partner total
+        current_total = self.partners_df.loc[self.partners_df['partner_id'] == partner_id, 'total_contributions'].values[0]
+        new_total = current_total + amount
+        self.partners_df.loc[self.partners_df['partner_id'] == partner_id, 'total_contributions'] = new_total
+        self.partners_df.loc[self.partners_df['partner_id'] == partner_id, 'last_contribution_date'] = datetime.now().strftime('%Y-%m-%d')
+        
+        return contribution_id
     
     def get_partnership_summary(self):
         """Get partnership dashboard summary"""
         total_partners = len(self.partners_df)
-        total_contributions = self.partners_df['total_contributions'].sum()
-        church_members = len(self.partners_df[self.partners_df['type'] == 'Individual'])
+        total_contributions = self.partners_df['total_contributions'].sum() if len(self.partners_df) > 0 else 0
+        church_members = len(self.partners_df[self.partners_df['type'] == 'Individual']) if len(self.partners_df) > 0 else 0
         
         # Tier breakdown
-        tier_counts = self.partners_df['tier'].value_counts()
+        tier_counts = self.partners_df['tier'].value_counts() if len(self.partners_df) > 0 else pd.Series()
         
         # Recent contributions (last 30 days)
         cutoff_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
@@ -1896,29 +1495,32 @@ class PartnershipManager:
 ┌─────────────────────────────────────────────────────┐
 │ PARTNERSHIP OVERVIEW                                 │
 ├─────────────────────────────────────────────────────┤
-│ Total Partners: {summary['total_partners']:<12} │ ↑ {summary['total_partners']} active                    │
+│ Total Partners: {summary['total_partners']:<12} │ {summary['total_partners']} active                    │
 │ Total Contributions: R {summary['total_contributions']:>10,.2f} │ All time                       │
 │ Church Members: {summary['church_members']:<12} │ {summary['church_member_pct']:.0f}% of total                │
 │ Monthly Average: R {summary['monthly_avg']:>10,.2f} │ Last 6 months                  │
 └─────────────────────────────────────────────────────┘
         """)
         
-        print("\nPARTNERSHIP TIERS:")
-        print(f"{'Tier':<20} {'Count':<10}")
-        print("-"*30)
-        for tier in self.tiers:
-            count = summary['tier_counts'].get(tier, 0)
-            print(f"{tier:<20} {count:<10}")
-        
-        print(f"\nRecent (30 days) Total Contributions: R {summary['recent_contributions']:,.2f}")
+        if summary['total_partners'] > 0:
+            print("\nPARTNERSHIP TIERS:")
+            print(f"{'Tier':<20} {'Count':<10}")
+            print("-"*30)
+            for tier in self.tiers:
+                count = summary['tier_counts'].get(tier, 0)
+                print(f"{tier:<20} {count:<10}")
+            
+            print(f"\nRecent (30 days) Total Contributions: R {summary['recent_contributions']:,.2f}")
+        else:
+            print("\nNo partners registered yet. Use 'Add Partner' to register your first partner.")
 
 
 class SMSManager:
     """Handle SMS broadcasting and messaging"""
     
     def __init__(self):
-        self.sms_credits = 202
-        self.messages_sent = 20
+        self.sms_credits = 0  # Start with 0 credits
+        self.messages_sent = 0
         self.success_rate = 100
         self.templates = {
             'Welcome Message': 'Dear {{first_name}}, welcome to {{church_name}}! We are blessed to have you.',
@@ -1930,6 +1532,11 @@ class SMSManager:
             'message_id', 'recipients', 'message', 'sent_date', 'status', 'credits_used'
         ])
         print(f"✓ SMS Manager initialized with {self.sms_credits} credits")
+    
+    def add_credits(self, amount):
+        """Add SMS credits"""
+        self.sms_credits += amount
+        return self.sms_credits
     
     def send_sms(self, recipients, message, sender="Church"):
         """Send SMS to recipients"""
@@ -1981,7 +1588,7 @@ class SMSManager:
 │ This Month: +0 today   Status: 100% Healthy        │
 ├─────────────────────────────────────────────────────┤
 │ {self.sms_credits:<3} SMS Credits        {self.messages_sent:<3} Recipients Reached  │
-│ Status: Healthy        Status: Healthy              │
+│ Status: {'Healthy' if self.sms_credits > 0 else 'Add Credits'}        Status: Healthy              │
 └─────────────────────────────────────────────────────┘
         """)
         
@@ -2009,27 +1616,7 @@ class FeedbackManager:
             'priority', 'submitted_date', 'message', 'status', 'admin_notes',
             'assigned_to', 'resolved_date'
         ])
-        self.load_sample_data()
-        
-    def load_sample_data(self):
-        """Load sample feedback data"""
-        feedback = [
-            {
-                'feedback_id': 'FB001',
-                'submitter_name': 'Anonymous',
-                'anonymous': True,
-                'category': 'Suggestion',
-                'priority': 'Medium',
-                'submitted_date': '2025-08-31',
-                'message': 'HRHRHRH',
-                'status': 'Read',
-                'admin_notes': '',
-                'assigned_to': None,
-                'resolved_date': None
-            }
-        ]
-        
-        self.feedback_df = pd.DataFrame(feedback)
+        # No sample data loaded
         print(f"✓ Feedback Manager initialized with {len(self.feedback_df)} feedback entries")
     
     def submit_feedback(self, message, category='General', priority='Medium', anonymous=True, submitter_name='Anonymous'):
@@ -2066,6 +1653,10 @@ class FeedbackManager:
         if feedback_id is None and len(self.feedback_df) > 0:
             feedback_id = self.feedback_df.iloc[0]['feedback_id']
         
+        if feedback_id is None:
+            print("\nNo feedback entries yet.")
+            return
+        
         feedback = self.feedback_df[self.feedback_df['feedback_id'] == feedback_id].iloc[0]
         
         print("\n" + "="*70)
@@ -2088,7 +1679,7 @@ FEEDBACK MESSAGE
 ADMIN NOTES & STATUS
 ──────────────────────────────────────────────────────
 Status: {feedback['status']}
-{feedback['admin_notes'] if feedback['admin_notes'] else ''}
+{feedback['admin_notes'] if feedback['admin_notes'] else 'No notes yet'}
         """)
 
 # Initialize Feedback Manager
@@ -2100,9 +1691,6 @@ cms.feedback = FeedbackManager()
 
 # Step 14: Main Dashboard and Interactive Menu
 
-class ChurchManagementSystem:
-    # ... (previous code extended with display methods)
-    
     def run_interactive_menu(self):
         """Run interactive menu system"""
         while True:
@@ -2194,18 +1782,21 @@ class ChurchManagementSystem:
             print("\nGender Distribution:", self.members.get_gender_distribution())
             print("\nAge Distribution:", self.members.get_age_distribution())
             
-            dept_counts, dept_pcts = self.members.get_department_distribution()
-            print("\nTop 5 Departments:")
-            for dept, count in dept_counts.head(5).items():
-                print(f"  {dept}: {count} members ({dept_pcts[dept]})")
+            if len(self.members.members_df) > 0:
+                dept_counts, dept_pcts = self.members.get_department_distribution()
+                print("\nTop 5 Departments:")
+                for dept, count in dept_counts.head(5).items():
+                    print(f"  {dept}: {count} members ({dept_pcts[dept]})")
         
         elif report_choice == '2':
             print("\nATTENDANCE TRENDS")
             print("-"*50)
             trends = self.attendance.get_attendance_trends(6)
-            for month, count in trends.items():
-                print(f"{month}: {count} attendees")
-            print(f"\n{alert}")
+            if len(trends) > 0:
+                for month, count in trends.items():
+                    print(f"{month}: {count} attendees")
+            else:
+                print("No attendance records yet.")
         
         elif report_choice == '3':
             print("\nFINANCIAL SUMMARY")
@@ -2213,19 +1804,23 @@ class ChurchManagementSystem:
             print(f"Total Income: R {self.finance.get_total_income():,.2f}")
             print(f"Total Expenses: R {self.finance.get_total_expenses():,.2f}")
             print(f"Net Balance: R {self.finance.get_current_balance():,.2f}")
-            print("\nIncome by Category:")
-            for cat, amount in self.finance.get_category_breakdown('Income').items():
-                print(f"  {cat}: R {amount:,.2f}")
+            if len(self.finance.transactions_df) > 0:
+                print("\nIncome by Category:")
+                for cat, amount in self.finance.get_category_breakdown('Income').items():
+                    print(f"  {cat}: R {amount:,.2f}")
         
         elif report_choice == '4':
             print("\nCHILDREN'S MINISTRY REPORT")
             print("-"*50)
-            age_dist = self.children.get_age_group_distribution()
-            for group, count in age_dist.items():
-                print(f"{group}: {count} children")
-            analytics = self.children.get_attendance_analytics('monthly')
-            print(f"\nMonthly Attendance: {analytics['total_attendance']}")
-            print(f"Active Children: {analytics['active_children']}")
+            if len(self.children.children_df) > 0:
+                age_dist = self.children.get_age_group_distribution()
+                for group, count in age_dist.items():
+                    print(f"{group}: {count} children")
+                analytics = self.children.get_attendance_analytics('monthly')
+                print(f"\nMonthly Attendance: {analytics['total_attendance']}")
+                print(f"Active Children: {analytics['active_children']}")
+            else:
+                print("No children registered yet.")
         
         elif report_choice == '5':
             print("\nPARTNERSHIP REPORT")
@@ -2233,12 +1828,13 @@ class ChurchManagementSystem:
             summary = self.partnerships.get_partnership_summary()
             print(f"Total Partners: {summary['total_partners']}")
             print(f"Total Contributions: R {summary['total_contributions']:,.2f}")
-            print(f"Church Members as Partners: {summary['church_members']} ({summary['church_member_pct']:.1f}%)")
-            print(f"Monthly Average: R {summary['monthly_avg']:,.2f}")
+            if summary['total_partners'] > 0:
+                print(f"Church Members as Partners: {summary['church_members']} ({summary['church_member_pct']:.1f}%)")
+                print(f"Monthly Average: R {summary['monthly_avg']:,.2f}")
 
 # Update the main system with new methods
-cms.__class__.run_interactive_menu = 'run_interactive_menu'
-cms.__class__.generate_reports = 'generate_reports'
+cms.run_interactive_menu = run_interactive_menu
+cms.generate_reports = generate_reports
 
 print("\n" + "="*70)
 print("SYSTEM INITIALIZATION COMPLETE")
@@ -2282,16 +1878,22 @@ print("\n" + "-"*70)
 print("GENDER DISTRIBUTION")
 print("-"*70)
 gender_dist = cms.members.get_gender_distribution()
-for gender, pct in gender_dist.items():
-    print(f"{gender}: {pct}")
+if gender_dist:
+    for gender, pct in gender_dist.items():
+        print(f"{gender}: {pct}")
+else:
+    print("No members yet")
 
 # Age distribution
 print("\n" + "-"*70)
 print("AGE DISTRIBUTION")
 print("-"*70)
 age_dist = cms.members.get_age_distribution()
-for age_group, pct in age_dist.items():
-    print(f"{age_group}: {pct}")
+if age_dist:
+    for age_group, pct in age_dist.items():
+        print(f"{age_group}: {pct}")
+else:
+    print("No members yet")
 
 print("\n" + "="*70)
 print("SYSTEM LAUNCHED SUCCESSFULLY!")
@@ -2404,22 +2006,38 @@ def export_all_data():
         os.makedirs('church_exports')
     
     # Export each dataframe
-    cms.members.members_df.to_csv('church_exports/members.csv', index=False)
-    cms.attendance.attendance_df.to_csv('church_exports/attendance.csv', index=False)
-    cms.finance.transactions_df.to_csv('church_exports/finance.csv', index=False)
-    cms.children.children_df.to_csv('church_exports/children.csv', index=False)
-    cms.children.children_attendance.to_csv('church_exports/children_attendance.csv', index=False)
-    cms.visitors.visitors_df.to_csv('church_exports/visitors.csv', index=False)
-    cms.visitors.follow_ups.to_csv('church_exports/follow_ups.csv', index=False)
-    cms.programs.programs_df.to_csv('church_exports/programs.csv', index=False)
-    cms.equipment.equipment_df.to_csv('church_exports/equipment.csv', index=False)
-    cms.groups.groups_df.to_csv('church_exports/groups.csv', index=False)
-    cms.groups.group_members.to_csv('church_exports/group_members.csv', index=False)
-    cms.welfare.welfare_payments.to_csv('church_exports/welfare_payments.csv', index=False)
-    cms.welfare.welfare_claims.to_csv('church_exports/welfare_claims.csv', index=False)
-    cms.partnerships.partners_df.to_csv('church_exports/partners.csv', index=False)
-    cms.partnerships.partner_contributions.to_csv('church_exports/partner_contributions.csv', index=False)
-    cms.feedback.feedback_df.to_csv('church_exports/feedback.csv', index=False)
+    if len(cms.members.members_df) > 0:
+        cms.members.members_df.to_csv('church_exports/members.csv', index=False)
+    if len(cms.attendance.attendance_df) > 0:
+        cms.attendance.attendance_df.to_csv('church_exports/attendance.csv', index=False)
+    if len(cms.finance.transactions_df) > 0:
+        cms.finance.transactions_df.to_csv('church_exports/finance.csv', index=False)
+    if len(cms.children.children_df) > 0:
+        cms.children.children_df.to_csv('church_exports/children.csv', index=False)
+    if len(cms.children.children_attendance) > 0:
+        cms.children.children_attendance.to_csv('church_exports/children_attendance.csv', index=False)
+    if len(cms.visitors.visitors_df) > 0:
+        cms.visitors.visitors_df.to_csv('church_exports/visitors.csv', index=False)
+    if len(cms.visitors.follow_ups) > 0:
+        cms.visitors.follow_ups.to_csv('church_exports/follow_ups.csv', index=False)
+    if len(cms.programs.programs_df) > 0:
+        cms.programs.programs_df.to_csv('church_exports/programs.csv', index=False)
+    if len(cms.equipment.equipment_df) > 0:
+        cms.equipment.equipment_df.to_csv('church_exports/equipment.csv', index=False)
+    if len(cms.groups.groups_df) > 0:
+        cms.groups.groups_df.to_csv('church_exports/groups.csv', index=False)
+    if len(cms.groups.group_members) > 0:
+        cms.groups.group_members.to_csv('church_exports/group_members.csv', index=False)
+    if len(cms.welfare.welfare_payments) > 0:
+        cms.welfare.welfare_payments.to_csv('church_exports/welfare_payments.csv', index=False)
+    if len(cms.welfare.welfare_claims) > 0:
+        cms.welfare.welfare_claims.to_csv('church_exports/welfare_claims.csv', index=False)
+    if len(cms.partnerships.partners_df) > 0:
+        cms.partnerships.partners_df.to_csv('church_exports/partners.csv', index=False)
+    if len(cms.partnerships.partner_contributions) > 0:
+        cms.partnerships.partner_contributions.to_csv('church_exports/partner_contributions.csv', index=False)
+    if len(cms.feedback.feedback_df) > 0:
+        cms.feedback.feedback_df.to_csv('church_exports/feedback.csv', index=False)
     
     print("\n" + "="*70)
     print("DATA EXPORT COMPLETE")
@@ -2439,53 +2057,6 @@ print("✅ Ready for production use")
 print("✅ Data persisted in memory (export to CSV for permanent storage)")
 print("\nThank you for using this Church Management System!")
 
-
-# In[34]:
-
-
-
-# In[36]:
-
-
-from flask import Flask, render_template, request, redirect, url_for
-
-app = Flask(__name__)
-
-# In-memory storage (replace with database later)
-members = []
-events = []
-sermons = []
-
-@app.route("/")
-def home():
-    return render_template("home.html", members=members, events=events, sermons=sermons)
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        name = request.form["name"]
-        email = request.form["email"]
-        members.append({"name": name, "email": email})
-        return redirect(url_for("home"))
-    return render_template("register.html")
-
-@app.route("/add_event", methods=["GET", "POST"])
-def add_event():
-    if request.method == "POST":
-        title = request.form["title"]
-        date = request.form["date"]
-        events.append({"title": title, "date": date})
-        return redirect(url_for("home"))
-    return render_template("add_event.html")
-
-@app.route("/add_sermon", methods=["GET", "POST"])
-def add_sermon():
-    if request.method == "POST":
-        title = request.form["title"]
-        link = request.form["link"]
-        sermons.append({"title": title, "link": link})
-        return redirect(url_for("home"))
-    return render_template("add_sermon.html")
 
 # ===== RUN THE APP =====
 if __name__ == '__main__':
