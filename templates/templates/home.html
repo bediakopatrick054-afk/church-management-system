@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Church Management System</title>
+</head>
+<body>
+    <h1>Church Management System</h1>
+    <p>Welcome! The system is working.</p>
+    
+    <h2>Navigation</h2>
+    <ul>
+        <li><a href="/register">Register Member</a></li>
+        <li><a href="/add_event">Add Event</a></li>
+        <li><a href="/add_sermon">Add Sermon</a></li>
+    </ul>
+    
+    <h2>Members</h2>
+    <ul>
+    {% for member in members %}
+        <li>{{ member.name }} - {{ member.email }}</li>
+    {% else %}
+        <li>No members yet</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
