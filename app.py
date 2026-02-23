@@ -1689,7 +1689,7 @@ cms.feedback = FeedbackManager()
 # In[25]:
 
 
-    def generate_reports(self):
+       def generate_reports(self):
         """Generate various reports"""
         print("\n" + "="*70)
         print("REPORTS & ANALYTICS")
@@ -1759,7 +1759,7 @@ cms.feedback = FeedbackManager()
                 print(f"Monthly Average: R {summary['monthly_avg']:,.2f}")
             else:
                 print("No partners yet")
-    
+
     def run_interactive_menu(self):
         """Run interactive menu system"""
         while True:
