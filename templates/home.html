@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Church Management System</title>
+<<<<<<< HEAD
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         h1 { color: #333; }
@@ -56,3 +57,27 @@
     </p>
 </body>
 </html>
+=======
+</head>
+<body>
+    <h1>Church Management System</h1>
+    <p>Welcome! The system is working.</p>
+    
+    <h2>Navigation</h2>
+    <ul>
+        <li><a href="/register">Register Member</a></li>
+        <li><a href="/add_event">Add Event</a></li>
+        <li><a href="/add_sermon">Add Sermon</a></li>
+    </ul>
+    
+    <h2>Members</h2>
+    <ul>
+    {% for member in members %}
+        <li>{{ member.name }} - {{ member.email }}</li>
+    {% else %}
+        <li>No members yet</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
+>>>>>>> 6486e6cf85d4251607c4ce44232030214551a025
