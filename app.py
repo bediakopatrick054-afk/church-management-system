@@ -1691,7 +1691,7 @@ cms.feedback = FeedbackManager()
 
 # Step 14: Main Dashboard and Interactive Menu
 
- def run_interactive_menu(self):
+    def run_interactive_menu(self):
         """Run interactive menu system"""
         while True:
             print("\n" + "="*70)
