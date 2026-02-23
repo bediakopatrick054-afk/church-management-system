@@ -1689,8 +1689,77 @@ cms.feedback = FeedbackManager()
 # In[25]:
 
 
-# Step 14: Main Dashboard and Interactive Menu
-
+    def generate_reports(self):
+        """Generate various reports"""
+        print("\n" + "="*70)
+        print("REPORTS & ANALYTICS")
+        print("="*70)
+        
+        print("\n1. Member Statistics")
+        print("2. Attendance Trends")
+        print("3. Financial Summary")
+        print("4. Children's Ministry Report")
+        print("5. Partnership Report")
+        
+        report_choice = input("\nSelect report (1-5): ").strip()
+        
+        if report_choice == '1':
+            print("\nMEMBER STATISTICS")
+            print("-"*50)
+            print(f"Total Members: {len(self.members.members_df) if self.members else 0}")
+            if self.members and len(self.members.members_df) > 0:
+                print(f"Active Members: {len(self.members.members_df[self.members.members_df['status'] == 'Active'])}")
+                print(f"New Members (30d): {self.members.get_new_members_count(30)}")
+                print("\nGender Distribution:", self.members.get_gender_distribution())
+                print("\nAge Distribution:", self.members.get_age_distribution())
+            else:
+                print("No members yet")
+        
+        elif report_choice == '2':
+            print("\nATTENDANCE TRENDS")
+            print("-"*50)
+            if self.attendance and len(self.attendance.attendance_df) > 0:
+                trends = self.attendance.get_attendance_trends(6)
+                for month, count in trends.items():
+                    print(f"{month}: {count} attendees")
+            else:
+                print("No attendance records yet.")
+        
+        elif report_choice == '3':
+            print("\nFINANCIAL SUMMARY")
+            print("-"*50)
+            if self.finance:
+                print(f"Total Income: R {self.finance.get_total_income():,.2f}")
+                print(f"Total Expenses: R {self.finance.get_total_expenses():,.2f}")
+                print(f"Net Balance: R {self.finance.get_current_balance():,.2f}")
+            else:
+                print("No financial data yet")
+        
+        elif report_choice == '4':
+            print("\nCHILDREN'S MINISTRY REPORT")
+            print("-"*50)
+            if self.children and len(self.children.children_df) > 0:
+                age_dist = self.children.get_age_group_distribution()
+                for group, count in age_dist.items():
+                    print(f"{group}: {count} children")
+                analytics = self.children.get_attendance_analytics('monthly')
+                print(f"\nMonthly Attendance: {analytics['total_attendance']}")
+                print(f"Active Children: {analytics['active_children']}")
+            else:
+                print("No children registered yet.")
+        
+        elif report_choice == '5':
+            print("\nPARTNERSHIP REPORT")
+            print("-"*50)
+            if self.partnerships and len(self.partnerships.partners_df) > 0:
+                summary = self.partnerships.get_partnership_summary()
+                print(f"Total Partners: {summary['total_partners']}")
+                print(f"Total Contributions: R {summary['total_contributions']:,.2f}")
+                print(f"Church Members as Partners: {summary['church_members']} ({summary['church_member_pct']:.1f}%)")
+                print(f"Monthly Average: R {summary['monthly_avg']:,.2f}")
+            else:
+                print("No partners yet")
+    
     def run_interactive_menu(self):
         """Run interactive menu system"""
         while True:
@@ -1729,6 +1798,11 @@ cms.feedback = FeedbackManager()
             elif choice == '3':
                 if self.attendance:
                     self.attendance.display_attendance_dashboard()
+                    qr_choice = input("\nGenerate QR code for attendance? (y/n): ").lower()
+                    if qr_choice == 'y':
+                        service = input("Service type: ")
+                        date_input = input("Date (YYYY-MM-DD) [Enter for today]: ") or datetime.now().strftime('%Y-%m-%d')
+                        self.attendance.generate_qr_code(service, date_input)
             elif choice == '4':
                 if self.finance:
                     self.finance.display_financial_dashboard()
@@ -1766,79 +1840,9 @@ cms.feedback = FeedbackManager()
                 self.generate_reports()
             else:
                 print("Invalid option. Please try again.")
-    
-    def generate_reports(self):
-        """Generate various reports"""
-        print("\n" + "="*70)
-        print("REPORTS & ANALYTICS")
-        print("="*70)
-        
-        print("\n1. Member Statistics")
-        print("2. Attendance Trends")
-        print("3. Financial Summary")
-        print("4. Children's Ministry Report")
-        print("5. Partnership Report")
-        
-        report_choice = input("\nSelect report (1-5): ").strip()
-        
-        if report_choice == '1':
-            print("\nMEMBER STATISTICS")
-            print("-"*50)
-            print(f"Total Members: {len(self.members.members_df)}")
-            print(f"Active Members: {len(self.members.members_df[self.members.members_df['status'] == 'Active'])}")
-            print(f"New Members (30d): {self.members.get_new_members_count(30)}")
-            print("\nGender Distribution:", self.members.get_gender_distribution())
-            print("\nAge Distribution:", self.members.get_age_distribution())
-            
-            if len(self.members.members_df) > 0:
-                dept_counts, dept_pcts = self.members.get_department_distribution()
-                print("\nTop 5 Departments:")
-                for dept, count in dept_counts.head(5).items():
-                    print(f"  {dept}: {count} members ({dept_pcts[dept]})")
-        
-        elif report_choice == '2':
-            print("\nATTENDANCE TRENDS")
-            print("-"*50)
-            trends = self.attendance.get_attendance_trends(6)
-            if len(trends) > 0:
-                for month, count in trends.items():
-                    print(f"{month}: {count} attendees")
-            else:
-                print("No attendance records yet.")
-        
-        elif report_choice == '3':
-            print("\nFINANCIAL SUMMARY")
-            print("-"*50)
-            print(f"Total Income: R {self.finance.get_total_income():,.2f}")
-            print(f"Total Expenses: R {self.finance.get_total_expenses():,.2f}")
-            print(f"Net Balance: R {self.finance.get_current_balance():,.2f}")
-            if len(self.finance.transactions_df) > 0:
-                print("\nIncome by Category:")
-                for cat, amount in self.finance.get_category_breakdown('Income').items():
-                    print(f"  {cat}: R {amount:,.2f}")
-        
-        elif report_choice == '4':
-            print("\nCHILDREN'S MINISTRY REPORT")
-            print("-"*50)
-            if len(self.children.children_df) > 0:
-                age_dist = self.children.get_age_group_distribution()
-                for group, count in age_dist.items():
-                    print(f"{group}: {count} children")
-                analytics = self.children.get_attendance_analytics('monthly')
-                print(f"\nMonthly Attendance: {analytics['total_attendance']}")
-                print(f"Active Children: {analytics['active_children']}")
-            else:
-                print("No children registered yet.")
-        
-        elif report_choice == '5':
-            print("\nPARTNERSHIP REPORT")
-            print("-"*50)
-            summary = self.partnerships.get_partnership_summary()
-            print(f"Total Partners: {summary['total_partners']}")
-            print(f"Total Contributions: R {summary['total_contributions']:,.2f}")
-            if summary['total_partners'] > 0:
-                print(f"Church Members as Partners: {summary['church_members']} ({summary['church_member_pct']:.1f}%)")
-                print(f"Monthly Average: R {summary['monthly_avg']:,.2f}")
+
+# Initialize the main system
+cms = ChurchManagementSystem()
 
 # Update the main system with new methods
 cms.run_interactive_menu = run_interactive_menu
