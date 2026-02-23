@@ -1691,7 +1691,7 @@ cms.feedback = FeedbackManager()
 
 # Step 14: Main Dashboard and Interactive Menu
 
-    def run_interactive_menu(self):
+ def run_interactive_menu(self):
         """Run interactive menu system"""
         while True:
             print("\n" + "="*70)
@@ -1724,36 +1724,44 @@ cms.feedback = FeedbackManager()
             elif choice == '1':
                 self.display_dashboard()
             elif choice == '2':
-                self.members.display_members_directory()
+                if self.members:
+                    self.members.display_members_directory()
             elif choice == '3':
-                self.attendance.display_attendance_dashboard()
-                qr_choice = input("\nGenerate QR code for attendance? (y/n): ").lower()
-                if qr_choice == 'y':
-                    service = input("Service type: ")
-                    date = input("Date (YYYY-MM-DD) [Enter for today]: ") or datetime.now().strftime('%Y-%m-%d')
-                    self.attendance.generate_qr_code(service, date)
+                if self.attendance:
+                    self.attendance.display_attendance_dashboard()
             elif choice == '4':
-                self.finance.display_financial_dashboard()
+                if self.finance:
+                    self.finance.display_financial_dashboard()
             elif choice == '5':
-                self.children.display_children_dashboard()
+                if self.children:
+                    self.children.display_children_dashboard()
             elif choice == '6':
-                self.visitors.display_visitor_management()
+                if self.visitors:
+                    self.visitors.display_visitor_management()
             elif choice == '7':
-                self.programs.display_programs()
+                if self.programs:
+                    self.programs.display_programs()
             elif choice == '8':
-                self.equipment.display_equipment_list()
+                if self.equipment:
+                    self.equipment.display_equipment_list()
             elif choice == '9':
-                self.groups.display_group_assignments()
+                if self.groups:
+                    self.groups.display_group_assignments()
             elif choice == '10':
-                self.prayer.display_prayer_line()
+                if self.prayer:
+                    self.prayer.display_prayer_line()
             elif choice == '11':
-                self.welfare.display_welfare_dashboard()
+                if self.welfare:
+                    self.welfare.display_welfare_dashboard()
             elif choice == '12':
-                self.partnerships.display_partnership_dashboard()
+                if self.partnerships:
+                    self.partnerships.display_partnership_dashboard()
             elif choice == '13':
-                self.sms.display_sms_center()
+                if self.sms:
+                    self.sms.display_sms_center()
             elif choice == '14':
-                self.feedback.display_feedback_details()
+                if self.feedback:
+                    self.feedback.display_feedback_details()
             elif choice == '15':
                 self.generate_reports()
             else:
